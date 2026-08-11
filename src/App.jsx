@@ -40,7 +40,7 @@ export default function App() {
   // Handlers for navigating between entities
   const handleSelectTech = (techId) => {
     setSelectedTechId(techId);
-    setActiveTab('tech-overview');
+    setActiveTab('roadmaps');
   };
 
   const handleSelectTopic = (topicId) => {

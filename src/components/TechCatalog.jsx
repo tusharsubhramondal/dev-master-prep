@@ -105,7 +105,8 @@ export default function TechCatalog({ onSelectTech, onSelectRoadmap }) {
         {filteredTechs.map((tech) => (
           <div
             key={tech.id}
-            className="glass-panel p-6 flex flex-col justify-between group hover:border-indigo-500/50 hover:shadow-glow transition-all"
+            onClick={() => onSelectRoadmap(tech.id)}
+            className="glass-panel p-6 flex flex-col justify-between group hover:border-indigo-500/50 hover:shadow-glow transition-all cursor-pointer"
           >
             <div className="space-y-4">
               {/* Card Header */}
