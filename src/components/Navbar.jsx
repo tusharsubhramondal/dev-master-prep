@@ -10,9 +10,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenSearch, theme, t
     { id: 'interview', label: 'Interview Prep', icon: 'fa-solid fa-comments' },
     { id: 'projects', label: 'Projects', icon: 'fa-solid fa-diagram-project' },
     { id: 'system-design', label: 'System Design', icon: 'fa-solid fa-cubes' },
-    { id: 'compare', label: 'Compare Engine', icon: 'fa-solid fa-code-compare' },
-    { id: 'dashboard', label: 'My Dashboard', icon: 'fa-solid fa-chart-pie' },
-    { id: 'admin', label: 'Admin Data', icon: 'fa-solid fa-sliders' }
+    { id: 'compare', label: 'Compare Engine', icon: 'fa-solid fa-code-compare' }
   ];
 
   const sidebarContent = (

@@ -8,8 +8,6 @@ import ComparisonView from './components/ComparisonView';
 import InterviewPlatform from './components/InterviewPlatform';
 import ProjectsView from './components/ProjectsView';
 import SystemDesignView from './components/SystemDesignView';
-import UserDashboard from './components/UserDashboard';
-import AdminSchemaInspector from './components/AdminSchemaInspector';
 import SearchModal from './components/SearchModal';
 
 export default function App() {
@@ -74,6 +72,7 @@ export default function App() {
             <TechCatalog
               onSelectTech={handleSelectTech}
               onSelectRoadmap={handleSelectRoadmap}
+              onSelectTopic={handleSelectTopic}
             />
           )}
 
@@ -115,14 +114,6 @@ export default function App() {
 
           {activeTab === 'system-design' && (
             <SystemDesignView />
-          )}
-
-          {activeTab === 'dashboard' && (
-            <UserDashboard onSelectTech={handleSelectTech} />
-          )}
-
-          {activeTab === 'admin' && (
-            <AdminSchemaInspector />
           )}
         </main>
 
