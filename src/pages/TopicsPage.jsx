@@ -9,11 +9,19 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
   const [copiedCode, setCopiedCode] = useState(false);
   const [activeTabSection, setActiveTabSection] = useState("all");
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
-  
+
   // Interactive Sandbox state
   const [userCode, setUserCode] = useState(topic.practiceProblem?.starterCode || '');
   const [testResult, setTestResult] = useState(null);
   const [showSolution, setShowSolution] = useState(false);
+
+  React.useEffect(() => {
+    if (topic && topic.practiceProblem) {
+      setUserCode(topic.practiceProblem.starterCode || '');
+      setTestResult(null);
+      setShowSolution(false);
+    }
+  }, [topicId]);
 
   const handleCopyCode = (text) => {
     navigator.clipboard.writeText(text);
@@ -52,7 +60,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
 
   return (
     <div className="space-y-8 animate-fade-in max-w-7xl mx-auto">
-      
+
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-xs text-slate-400">
@@ -109,7 +117,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
 
       {/* Main Layout: Sticky Sidebar TOC + Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
+
         {/* Sticky Table of Contents (Left Col) */}
         <aside className="lg:col-span-1 hidden lg:block">
           <div className="sticky top-24 glass-panel p-4 space-y-3 max-h-[calc(100vh-120px)] overflow-y-auto">
@@ -132,7 +140,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
 
         {/* Main Content (Right 3 Cols) */}
         <main className="lg:col-span-3 space-y-10">
-          
+
           {/* 1. DEFINITION */}
           <section id="sec-definition" className="glass-panel p-6 space-y-3">
             <h2 className="text-lg font-bold text-white flex items-center gap-2 text-indigo-400">
@@ -203,7 +211,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
               <h2 className="text-lg font-bold text-white flex items-center gap-2 text-pink-400">
                 <i className="fa-solid fa-diagram-project"></i> 6. Visual Architecture Diagram
               </h2>
-              <div 
+              <div
                 className="overflow-x-auto rounded-xl"
                 dangerouslySetInnerHTML={{ __html: topic.visualDiagram }}
               />
@@ -399,7 +407,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
                   onChange={(e) => setUserCode(e.target.value)}
                   className="w-full font-mono text-xs bg-[#0d1117] text-slate-100 p-3 rounded-xl border border-slate-700 focus:border-indigo-500 focus:outline-none"
                 />
-                
+
                 <div className="flex items-center gap-3">
                   <button
                     onClick={handleRunCode}
@@ -410,11 +418,10 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
                 </div>
 
                 {testResult && (
-                  <div className={`p-3 rounded-xl text-xs font-mono border ${
-                    testResult.success 
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' 
-                      : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-                  }`}>
+                  <div className={`p-3 rounded-xl text-xs font-mono border ${testResult.success
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                    : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                    }`}>
                     {testResult.message}
                   </div>
                 )}
