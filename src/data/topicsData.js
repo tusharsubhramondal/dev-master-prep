@@ -19,6 +19,11 @@ import { microservicesTopics } from './topics/microservicesTopics.js';
 import { expressTopics } from './topics/expressTopics.js';
 import { vueTopics } from './topics/vueTopics.js';
 import { nextjsTopics } from './topics/nextjsTopics.js';
+import { kafkaTopics } from './topics/kafkaTopics.js';
+import { kubernetesTopics } from './topics/kubernetesTopics.js';
+import { rabbitmqTopics } from './topics/rabbitmqTopics.js';
+import { bullmqTopics } from './topics/bullmqTopics.js';
+import { prismaTopics } from './topics/prismaTopics.js';
 
 export const topicsData = {
   ...javascriptTopics,
@@ -40,5 +45,10 @@ export const topicsData = {
   ...microservicesTopics,
   ...expressTopics,
   ...vueTopics,
-  ...nextjsTopics
+  ...nextjsTopics,
+  ...kafkaTopics,
+  ...kubernetesTopics,
+  ...rabbitmqTopics,
+  ...bullmqTopics,
+  ...prismaTopics
 };

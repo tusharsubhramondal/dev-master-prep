@@ -71,69 +71,117 @@ aws sts get-caller-identity`,
   }),
 
   // 2. VIRTUAL COMPUTE (EC2)
+  // 2. VIRTUAL COMPUTE (EC2 & APP DEPLOYMENT)
   "aws-ec2": createTopicSchema({
     id: "aws-ec2",
     techId: "aws",
-    title: "Amazon EC2 (Instance Types, AMIs, Security Groups & EBS)",
+    title: "Amazon EC2 & Application Deployment (Deploying Node.js & Laravel Apps)",
     category: "AWS Compute",
     difficulty: "Beginner",
     experienceBand: "0–1 year",
-    readingTime: "9 min",
+    readingTime: "12 min",
     prerequisites: ["aws-basics"],
-    definition: "Amazon Elastic Compute Cloud (EC2) provides resizable virtual servers in the cloud, configured using AMIs (machine images), Instance Types (t3, c6i, m6i), Security Groups (stateful virtual firewalls), and EBS persistent disk storage.",
-    simpleExplanation: "EC2 lets you launch virtual cloud servers in seconds to host your Node.js or Laravel backend applications.",
-    whyDoesItExist: "Replaces purchasing physical hardware servers with elastic pay-as-you-go cloud virtual machines.",
-    basicExample: `# User Data Script (Executes automatically when EC2 launches!)
-#!/bin/bash
-apt update -y
-apt install -y nginx nodejs git
-systemctl start nginx`,
+    definition: "Amazon Elastic Compute Cloud (EC2) provides virtual servers configured via AMIs, Instance Types, Security Groups, and EBS storage. Applications (Node.js/Laravel) are deployed on EC2 behind an Nginx reverse proxy managed by process monitors (PM2 or Systemd).",
+    simpleExplanation: "EC2 lets you launch virtual cloud servers in seconds. You can deploy Node.js apps using PM2 & Nginx or Laravel apps using Nginx, PHP-FPM & Composer.",
+    whyDoesItExist: "Replaces physical hardware servers with elastic pay-as-you-go cloud virtual machines.",
+    basicExample: `# 1. NODE.JS DEPLOYMENT ON EC2 (PM2 + NGINX)
+# Install Node.js, PM2, and Nginx
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs nginx git
+sudo npm install -y -g pm2
+
+# Clone repository & start Node app
+git clone https://github.com/myuser/my-node-app.git /var/www/node-app
+cd /var/www/node-app && npm install
+pm2 start server.js --name "node-api"
+pm2 save && pm2 startup
+
+# 2. LARAVEL DEPLOYMENT ON EC2 (NGINX + PHP-FPM)
+# Install PHP 8.2, Composer, and Nginx
+sudo apt install -y php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-mbstring php8.2-curl unzip composer nginx
+git clone https://github.com/myuser/my-laravel-app.git /var/www/laravel-app
+cd /var/www/laravel-app
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+php artisan key:generate
+sudo chown -R www-data:www-data /var/www/laravel-app
+sudo chmod -R 775 /var/www/laravel-app/storage /var/www/laravel-app/bootstrap/cache`,
     howItWorks: [
-      "1. AWS provisions hypervisor virtual machine instance from AMI image.",
-      "2. Security Groups enforce stateful firewall rules on incoming/outgoing ports.",
-      "3. EBS (Elastic Block Store) volume attaches over network as persistent root disk."
+      "1. Provision EC2 instance (Ubuntu 22.04 LTS) and configure Security Group allowing Port 22 (SSH), Port 80 (HTTP), Port 443 (HTTPS).",
+      "2. Node.js Deployment: Run PM2 process manager on local port 3000 and reverse-proxy Nginx location / to http://127.0.0.1:3000.",
+      "3. Laravel Deployment: Configure Nginx to pass PHP requests to fastcgi_pass unix:/var/run/php/php8.2-fpm.sock."
     ],
-    visualDiagram: `<svg viewBox="0 0 700 180" class="w-full bg-slate-900 rounded-lg p-2"><rect x="30" y="40" width="640" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="350" y="95" fill="#34d399" font-weight="bold" text-anchor="middle">Security Group (Stateful Firewall) -&gt; EC2 Instance -&gt; EBS Storage Volume</text></svg>`,
-    realWorldExample: `# Launching EC2 instance via AWS CLI:
-aws ec2 run-instances \\
-  --image-id ami-0c55b159cbfafe1f0 \\
-  --instance-type t3.micro \\
-  --key-name my-key-pair`,
+    visualDiagram: `<svg viewBox="0 0 700 180" class="w-full bg-slate-900 rounded-lg p-2"><rect x="30" y="40" width="640" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="350" y="95" fill="#34d399" font-weight="bold" text-anchor="middle">Internet (Port 80/443) -&gt; Nginx Reverse Proxy -&gt; (Node.js PM2 :3000 OR Laravel PHP-FPM)</text></svg>`,
+    realWorldExample: `# Nginx Virtual Host Config (/etc/nginx/sites-available/app.conf)
+
+# A. Node.js Nginx Reverse Proxy:
+server {
+    listen 80;
+    server_name node.example.com;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+# B. Laravel Nginx Config:
+server {
+    listen 80;
+    server_name laravel.example.com;
+    root /var/www/laravel-app/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \\.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    }
+}`,
     commonUseCases: [
-      "Hosting Node.js, Laravel, and Python web application backends",
-      "Configuring Security Groups to allow port 80/443 web traffic",
-      "Using Spot Instances for batch background compute jobs at 90% discount"
+      "Deploying Node.js backend REST APIs using PM2 cluster mode on EC2",
+      "Deploying Laravel PHP applications using Nginx, PHP-FPM, and Composer on EC2",
+      "Configuring Security Groups to allow public Web traffic (80/443) while restricting SSH (22) to admin IPs",
+      "Securing deployments with free SSL certificates via Certbot (`sudo certbot --nginx`)"
     ],
     commonMistakes: [
       "Opening Security Group port 22 (SSH) to 0.0.0.0/0 (exposes SSH to global brute-force bots)",
-      "Confusing Security Groups (Stateful, attached to EC2) with Network ACLs (Stateless, attached to Subnets)"
+      "Forgetting to set proper directory permissions (`chmod -R 775 storage bootstrap/cache`) on Laravel EC2 deployments causing 500 error logs",
+      "Running Node.js directly with `node server.js` without PM2 (app stays down if server crashes!)"
     ],
     bestPractices: [
-      "Restrict SSH Security Group access to your specific office/VPN IP address",
-      "Use IAM Instance Profiles (Roles) to grant EC2 permissions to AWS S3/RDS"
+      "Always use PM2 for Node.js apps to ensure auto-restarts on crash",
+      "Set proper web server ownership (`chown -R www-data:www-data`) for Laravel deployments",
+      "Install Certbot (`sudo apt install certbot python3-certbot-nginx`) to auto-provision HTTPS Let's Encrypt SSL certificates"
     ],
-    whenToUse: ["When full OS control and custom virtual server configurations are required"],
+    whenToUse: ["When full OS control and custom virtual server configurations are required for Node.js or Laravel apps"],
     whenNotToUse: ["Do not use manual EC2 instances if serverless (Lambda) or containerized (ECS) fits the workload"],
-    relatedConcepts: ["EC2", "Security Groups", "EBS Volume", "AMI", "Instance Profile"],
+    relatedConcepts: ["EC2 Deployment", "Node.js PM2", "Laravel PHP-FPM", "Nginx Reverse Proxy", "Security Groups"],
     comparison: {
-      title: "Security Groups vs Network ACLs (NACLs)",
-      headers: ["Feature", "Security Groups (SG)", "Network ACLs (NACLs)"],
+      title: "Node.js Deployment vs Laravel Deployment on EC2",
+      headers: ["Aspect", "Node.js EC2 Deployment", "Laravel EC2 Deployment"],
       rows: [
-        ["Attachment", "EC2 Instance Level", "Subnet Level"],
-        ["State", "Stateful (Return traffic automatically allowed)", "Stateless (Must explicitly allow return traffic)"],
-        ["Rules", "ALLOW rules only", "ALLOW and DENY rules"]
+        ["Process Manager", "PM2 (Cluster Mode / Daemon)", "PHP-FPM (FastCGI Process Manager)"],
+        ["Web Server Role", "Nginx acts as Reverse Proxy to http://127.0.0.1:3000", "Nginx serves /public/index.php via Unix Socket"],
+        ["Dependencies", "npm install (node_modules)", "composer install --no-dev (vendor)"],
+        ["Permissions", "User directory write access", "Requires `chmod -R 775 storage bootstrap/cache`"]
       ]
     },
     interviewQuestions: [
-      { level: "Beginner", question: "What does it mean that Security Groups are stateful in Amazon EC2?", answer: "Stateful means if you allow an inbound request (e.g. HTTP on port 80), the outbound response traffic is automatically allowed out regardless of outbound rules." }
+      { level: "Beginner", question: "How do you deploy a Node.js and a Laravel application on an AWS EC2 instance behind Nginx?", answer: "For Node.js, run the app via PM2 on an internal port (e.g. 3000) and configure Nginx as a reverse proxy using `proxy_pass http://127.0.0.1:3000`. For Laravel, set the Nginx root directory to `/var/www/laravel/public` and route PHP requests to PHP-FPM via `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock`." }
     ],
     practiceProblem: {
-      description: "Write AWS CLI command describing running EC2 instances.",
-      starterCode: `aws ec2 describe-instances`,
+      description: "Write PM2 start command for Node server.js.",
+      starterCode: `pm2 start server.js --name "api"`,
       testAssertion: "true",
-      solution: `aws ec2 describe-instances`
+      solution: `pm2 start server.js --name "api"`
     },
-    quickRevision: "★ EC2 provides virtual servers in the cloud.\n★ Security Groups are stateful firewalls attached to EC2.\n★ EBS volumes provide persistent block storage."
+    quickRevision: "★ Use PM2 for Node.js auto-restarts; PHP-FPM for Laravel.\n★ Nginx proxy_pass for Node; fastcgi_pass for Laravel.\n★ Set 775 storage permissions on Laravel EC2 deployments."
   }),
 
   // 3. OBJECT STORAGE (S3)
@@ -275,64 +323,92 @@ aws ec2 create-vpc --cidr-block 10.0.0.0/16`,
     quickRevision: "★ Public Subnets connect to Internet Gateway (IGW).\n★ Private Subnets use NAT Gateway for outbound updates.\n★ ALWAYS isolate databases (RDS) in Private Subnets."
   }),
 
-  // 5. RELATIONAL DATABASES (RDS)
+  // 5. RELATIONAL DATABASES (RDS & APP INTEGRATION)
   "aws-rds": createTopicSchema({
     id: "aws-rds",
     techId: "aws",
-    title: "Amazon RDS (PostgreSQL/MySQL, Multi-AZ & Read Replicas)",
+    title: "Amazon RDS & Connecting Applications (Laravel & Node.js Database Integration)",
     category: "AWS Database",
     difficulty: "Intermediate",
     experienceBand: "1–3 years",
     prerequisites: ["aws-vpc"],
-    definition: "Amazon RDS (Relational Database Service) is a managed database service supporting PostgreSQL, MySQL, and Aurora, providing Multi-AZ synchronous failover and Read Replicas.",
-    simpleExplanation: "RDS manages database OS patching, automated daily backups, hardware scaling, and instant failover without database administration overhead.",
+    definition: "Amazon RDS (Relational Database Service) is a managed database service (PostgreSQL/MySQL/Aurora). Node.js and Laravel applications connect to RDS via database connection strings, secured with Security Group Peering Rules (Inbound MySQL 3306 / Postgres 5432 from EC2 SG) and IAM Database Authentication.",
+    simpleExplanation: "RDS hosts your managed MySQL or PostgreSQL database. You connect to it from Node.js or Laravel using environment variables pointing to the RDS endpoint hostname.",
     whyDoesItExist: "Eliminates database administration burden (patching, backups, replication setups).",
-    basicExample: `-- Multi-AZ Failover Architecture:
-Primary RDS Instance (AZ-a) == Synchronous Replication ==> Standby RDS Instance (AZ-b)
-(Auto-fails over DNS within 60s if AZ-a crashes!)`,
+    basicExample: `# 1. LARAVEL RDS CONFIGURATION (.env)
+DB_CONNECTION=mysql
+DB_HOST=production-db.c123456789.us-east-1.rds.amazonaws.com
+DB_PORT=3306
+DB_DATABASE=app_production
+DB_USERNAME=admin
+DB_PASSWORD=SecurePassword123!
+
+# 2. NODE.JS RDS CONFIGURATION (.env & mysql2/pg)
+# .env:
+DATABASE_URL="mysql://admin:SecurePassword123!@production-db.c123456789.us-east-1.rds.amazonaws.com:3306/app_production"
+
+// Node.js mysql2 pool code:
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: 3306,
+  ssl: { rejectUnauthorized: true } // SSL Connection to RDS!
+});`,
     howItWorks: [
-      "1. Multi-AZ deployment maintains synchronous block-level secondary replica in a second AZ.",
-      "2. On primary failure, RDS automatically updates CNAME DNS record to point to standby instance.",
-      "3. Read Replicas replicate asynchronously to offload heavy read queries."
+      "1. Place RDS instance in Private DB Subnet Group (no public IP).",
+      "2. Security Group Rule: Add Inbound Rule on RDS SG allowing MySQL (3306) or PostgreSQL (5432) with Source set to the EC2 Security Group ID (sg-123456).",
+      "3. Laravel/Node app connects to RDS endpoint DNS over SSL."
     ],
-    visualDiagram: `<svg viewBox="0 0 700 180" class="w-full bg-slate-900 rounded-lg p-2"><rect x="30" y="40" width="640" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="350" y="95" fill="#34d399" font-weight="bold" text-anchor="middle">Primary RDS (AZ-a) == Sync Replication ==&gt; Standby RDS (AZ-b Auto Failover)</text></svg>`,
-    realWorldExample: `// Node / Laravel DB config pointing to RDS endpoint:
-DB_HOST=my-database.c123456.us-east-1.rds.amazonaws.com`,
+    visualDiagram: `<svg viewBox="0 0 700 180" class="w-full bg-slate-900 rounded-lg p-2"><rect x="30" y="40" width="640" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="350" y="95" fill="#34d399" font-weight="bold" text-anchor="middle">EC2 Instance (App SG) -- [MySQL Port 3306] --&gt; RDS Database (RDS SG: Inbound from App SG)</text></svg>`,
+    realWorldExample: `# AWS CLI Security Group Rule for EC2 -> RDS Access:
+aws ec2 authorize-security-group-ingress \\
+  --group-id sg-0123456789rds \\
+  --protocol tcp \\
+  --port 3306 \\
+  --source-group sg-0123456789ec2`,
     commonUseCases: [
-      "Hosting managed PostgreSQL and MySQL databases for Node.js and Laravel apps",
-      "Configuring Multi-AZ for high availability production deployments",
-      "Offloading analytics reads to RDS Read Replicas"
+      "Connecting Laravel applications to RDS MySQL / PostgreSQL databases via `.env`",
+      "Connecting Node.js applications using `mysql2`, `pg`, or Prisma ORM to RDS",
+      "Restricting RDS database access strictly to the EC2 Security Group ID (No public access)",
+      "Using IAM Database Authentication to generate short-lived tokens instead of passwords"
     ],
     commonMistakes: [
-      "Confusing Multi-AZ (Disaster Recovery failover) with Read Replicas (Read scaling)",
-      "Placing RDS instances in public subnets"
+      "Setting RDS Publicly Accessible = YES (exposes database directly to public internet! Always set to NO!)",
+      "Configuring RDS Security Group to allow 0.0.0.0/0 on port 3306 (Always restrict source to the EC2 Security Group ID!)",
+      "Forgetting to run `php artisan config:cache` after updating `.env` on Laravel EC2 instances"
     ],
     bestPractices: [
-      "Enable Multi-AZ for production RDS instances",
-      "Use Amazon Aurora for 5x performance over standard MySQL/Postgres"
+      "Set RDS 'Publicly Accessible' to NO and place it in Private Subnets",
+      "Allow inbound port 3306/5432 in RDS SG ONLY from the EC2 Security Group ID (`sg-xxxx`)",
+      "Use SSL/TLS encrypted database connections (`ssl: { rejectUnauthorized: true }`)"
     ],
-    whenToUse: ["In all managed relational database hosting on AWS"],
-    whenNotToUse: ["Do not host raw self-managed database servers on EC2 if RDS is available"],
-    relatedConcepts: ["Multi-AZ", "Read Replicas", "Amazon Aurora", "Automated Backups"],
+    whenToUse: ["In all production relational database setups for Node.js and Laravel applications on AWS"],
+    whenNotToUse: ["Do not expose RDS instances to the public internet with 0.0.0.0/0 ingress rules"],
+    relatedConcepts: ["RDS Endpoint", "Security Group Ingress", "Laravel RDS Connection", "Node.js RDS Connection", "IAM DB Auth"],
     comparison: {
-      title: "Multi-AZ vs Read Replicas",
-      headers: ["Feature", "Multi-AZ Deployment", "Read Replicas"],
+      title: "Node.js vs Laravel RDS Integration",
+      headers: ["Feature", "Node.js RDS Connection", "Laravel RDS Connection"],
       rows: [
-        ["Primary Purpose", "High Availability & Disaster Recovery (Failover)", "Scalability (Offloading read SELECT traffic)"],
-        ["Replication", "Synchronous (Zero data loss)", "Asynchronous"],
-        ["Database Engine Use", "Passive Standby (Cannot accept queries)", "Active Read-Only Instance"]
+        ["Connection Driver", "`mysql2`, `pg`, or Prisma ORM", "PDO MySQL / PostgreSQL Driver"],
+        ["Config File", `.env -> \`process.env.DB_HOST\``, `.env -> \`config/database.php\``],
+        ["Connection Pooling", "Managed via `mysql.createPool()`", "Managed automatically via PHP PDO connection pool / Swoole"],
+        ["SSL Option", "`ssl: { rejectUnauthorized: true }`", "`MYSQL_ATTR_SSL_CA` in `config/database.php`"]
       ]
     },
     interviewQuestions: [
-      { level: "Intermediate", question: "What is the difference between Multi-AZ and Read Replicas in Amazon RDS?", answer: "Multi-AZ creates a synchronous passive standby instance in a second AZ strictly for automated High Availability failover. Read Replicas use asynchronous replication to create active read-only instances for scaling SELECT query traffic." }
+      { level: "Intermediate", question: "How do you securely connect an EC2 instance to an AWS RDS database without exposing the database to the internet?", answer: "Place the RDS database in a Private Subnet with `Publicly Accessible` set to NO. On the RDS Security Group, add an inbound rule for MySQL (3306) or Postgres (5432) with the Source set to the EC2 instance's Security Group ID (`sg-xxxx`). The app then connects using the internal RDS endpoint DNS." }
     ],
     practiceProblem: {
-      description: "Write AWS CLI command listing RDS DB instances.",
-      starterCode: `aws rds describe-db-instances`,
+      description: "Write DB_HOST environment variable format for RDS endpoint.",
+      starterCode: `DB_HOST=my-db.c123.us-east-1.rds.amazonaws.com`,
       testAssertion: "true",
-      solution: `aws rds describe-db-instances`
+      solution: `DB_HOST=my-db.c123.us-east-1.rds.amazonaws.com`
     },
-    quickRevision: "★ Multi-AZ = Synchronous failover for High Availability.\n★ Read Replicas = Asynchronous read scaling.\n★ Amazon Aurora delivers 5x MySQL performance."
+    quickRevision: "★ Set RDS Publicly Accessible = NO in Private Subnets.\n★ Restrict RDS SG ingress port 3306/5432 to EC2 SG ID.\n★ Connect Node & Laravel via DB_HOST environment variable."
   }),
 
   // 6. SERVERLESS (LAMBDA)

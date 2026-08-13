@@ -413,5 +413,68 @@ export const roadmapsData = {
       { step: 9, title: "Kubernetes Orchestration", desc: "Pods, Deployments, Services, Ingress Controllers, ConfigMaps, Secrets, Helm Charts.", topicId: "devops-k8s", level: "Senior" },
       { step: 10, title: "Deployment Strategies & Site Reliability", desc: "Blue-Green deployments, Canary releases, SRE concepts (SLO, SLA, Error Budgets).", topicId: "devops-sre", level: "Senior" }
     ]
+  },
+
+  kafka: {
+    techId: "kafka",
+    title: "Apache Kafka Event Streaming Roadmap",
+    steps: [
+      { step: 1, title: "Kafka Core Architecture", desc: "Topics, Partitions, Brokers, Event Log stream, Offset management.", topicId: "kafka-basics", level: "Beginner" },
+      { step: 2, title: "Producer Mechanics & Partitioning", desc: "Producer Acks (0, 1, all), Record keys, Custom partitioners, Idempotent producers.", topicId: "kafka-producers", level: "Beginner" },
+      { step: 3, title: "Consumer Groups & Rebalancing", desc: "Consumer groups, Offset commit strategies (auto vs manual), Rebalance protocol.", topicId: "kafka-consumers", level: "Intermediate" },
+      { step: 4, title: "Kafka Connect & Integration", desc: "Source & Sink connectors, Change Data Capture (Debezium), Database streaming.", topicId: "kafka-connect", level: "Intermediate" },
+      { step: 5, title: "Kafka Streams & Event Processing", desc: "KStream, KTable, Windowing operations, Stream joins, State stores.", topicId: "kafka-streams", level: "Intermediate" },
+      { step: 6, title: "Schema Registry & Avro", desc: "Confluent Schema Registry, Apache Avro serialization, Schema evolution rules.", topicId: "kafka-schema-registry", level: "Senior" },
+      { step: 7, title: "Cluster Operations & Security", desc: "Kraft consensus vs ZooKeeper, SASL/SSL auth, Topic retention policies, Monitoring.", topicId: "kafka-operations", level: "Senior" }
+    ]
+  },
+
+  kubernetes: {
+    techId: "kubernetes",
+    title: "Kubernetes Container Orchestration Roadmap",
+    steps: [
+      { step: 1, title: "Kubernetes Architecture & Control Plane", desc: "kube-apiserver, etcd, kube-scheduler, kube-controller-manager, kubelet, kube-proxy.", topicId: "k8s-basics", level: "Beginner" },
+      { step: 2, title: "Pods & Deployments", desc: "Pod lifecycle, Declarative Deployments, ReplicaSets, Rolling updates & Rollbacks.", topicId: "k8s-pods-deployments", level: "Beginner" },
+      { step: 3, title: "Services & Ingress Controllers", desc: "ClusterIP, NodePort, LoadBalancer, Ingress routing, Nginx Ingress, Cert-Manager.", topicId: "k8s-services-ingress", level: "Intermediate" },
+      { step: 4, title: "ConfigMaps & Secrets Management", desc: "Injecting environment variables, mounting files, sealed secrets, HashiCorp Vault.", topicId: "k8s-configmaps-secrets", level: "Intermediate" },
+      { step: 5, title: "Storage & Persistent Volumes", desc: "PV, PVC, StorageClasses, Dynamic Provisioning, StatefulSets.", topicId: "k8s-storage", level: "Intermediate" },
+      { step: 6, title: "Helm Package Management", desc: "Helm charts, templates, values.yaml, release versioning, custom chart creation.", topicId: "k8s-helm", level: "Senior" },
+      { step: 7, title: "RBAC, Security & Auto-scaling", desc: "ServiceAccounts, Roles, RoleBindings, HPA (Horizontal Pod Autoscaler), KEDA.", topicId: "k8s-security-scaling", level: "Senior" }
+    ]
+  },
+
+  rabbitmq: {
+    techId: "rabbitmq",
+    title: "RabbitMQ Message Broker Roadmap",
+    steps: [
+      { step: 1, title: "RabbitMQ Fundamentals & AMQP 0-9-1", desc: "AMQP protocol, Message structure, Queues, Exchanges, Bindings, Routing Keys.", topicId: "rabbitmq-basics", level: "Beginner" },
+      { step: 2, title: "Exchange Types & Routing Patterns", desc: "Direct, Fanout, Topic, and Headers exchanges, Pub/Sub patterns.", topicId: "rabbitmq-exchanges", level: "Beginner" },
+      { step: 3, title: "Message Acknowledgments & DLQ", desc: "Manual Acks/Nacks, Prefetch count, Dead Letter Exchanges (DLX), Retry queues.", topicId: "rabbitmq-ack-dlq", level: "Intermediate" },
+      { step: 4, title: "Clustering, Mirroring & High Availability", desc: "Classic Mirrored Queues vs Quorum Queues, Federation plugin, Shovel plugin.", topicId: "rabbitmq-ha", level: "Senior" }
+    ]
+  },
+
+  bullmq: {
+    techId: "bullmq",
+    title: "BullMQ Job Queue Roadmap",
+    steps: [
+      { step: 1, title: "BullMQ Core Concepts & Redis Backend", desc: "Queues, Jobs, Workers, Redis connection setup, Event loop integration.", topicId: "bullmq-basics", level: "Beginner" },
+      { step: 2, title: "Workers & Job Concurrency", desc: "Defining Workers, Concurrency limits, Job completion & failure handlers.", topicId: "bullmq-workers", level: "Beginner" },
+      { step: 3, title: "Retries, Backoff & Delay Jobs", desc: "Exponential backoff strategies, Delayed jobs, Rate limiting, Repeatable Cron jobs.", topicId: "bullmq-retries", level: "Intermediate" },
+      { step: 4, title: "Parent-Child Flows & Bull-Board", desc: "FlowProducer, Job dependencies, Parent-child workflows, Bull-Board UI monitoring.", topicId: "bullmq-flows", level: "Senior" }
+    ]
+  },
+
+  prisma: {
+    techId: "prisma",
+    title: "Prisma ORM Database Mastery Roadmap",
+    techCategory: "database",
+    steps: [
+      { step: 1, title: "Prisma Core & Schema Definition", desc: "schema.prisma syntax, Datasource, Generator, Models, Scalar & Enum types.", topicId: "prisma-basics", level: "Beginner" },
+      { step: 2, title: "Prisma Client CRUD Operations", desc: "create, findUnique, findMany, update, delete, upsert, filtering & sorting.", topicId: "prisma-crud", level: "Beginner" },
+      { step: 3, title: "Relations & Nested Queries", desc: "One-to-One, One-to-Many, Many-to-Many, Relation fields (@relation), include vs select.", topicId: "prisma-relations", level: "Intermediate" },
+      { step: 4, title: "Migrations & Schema Evolution", desc: "Prisma Migrate (prisma migrate dev/deploy), Introspection (prisma db pull).", topicId: "prisma-migrations", level: "Intermediate" },
+      { step: 5, title: "Transactions & Middleware", desc: "Interactive transactions ($transaction), Client extensions, Middleware logging.", topicId: "prisma-transactions", level: "Senior" }
+    ]
   }
 };
