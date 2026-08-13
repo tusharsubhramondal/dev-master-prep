@@ -1,15 +1,18 @@
 
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Main from './layout/main';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import TechnologiesPage from './pages/TechnologiesPage';
 import RoadmapsPage from './pages/RoadmapsPage';
 import TopicsPage from './pages/TopicsPage';
+import IntegrationPage from './pages/IntegrationPage';
 
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route element={<Main />}>
           <Route path="/" element={<Navigate to="/technologies" replace />} />
@@ -18,6 +21,7 @@ export default function App() {
           <Route path="/roadmaps/:techId" element={<RoadmapsPage />} />
           <Route path="/topics" element={<TopicsPage />} />
           <Route path="/topics/:topicId" element={<TopicsPage />} />
+          <Route path="/integration" element={<IntegrationPage />} />
           <Route path="*" element={<Navigate to="/technologies" replace />} />
         </Route>
       </Routes>

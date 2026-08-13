@@ -8,6 +8,7 @@ export default function Header() {
     if (pathname.startsWith('/technologies')) return 'Technologies';
     if (pathname.startsWith('/roadmaps')) return 'Roadmaps';
     if (pathname.startsWith('/topics')) return 'Topic Documentation';
+    if (pathname.startsWith('/integration')) return 'Integration Workflows';
     return 'Technologies';
   };
 
