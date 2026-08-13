@@ -71,6 +71,10 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
     { id: "sec-revision", label: "17. Quick Revision" }
   ];
 
+  const availableTopicsForTech = Object.values(topicsData).filter(
+    (t) => t.techId === topic.techId
+  );
+
   return (
     <div className="space-y-8 animate-fade-in max-w-7xl mx-auto">
 
@@ -86,12 +90,33 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
           <span className="text-indigo-400 font-semibold">{topic.title}</span>
         </div>
 
-        <button
-          onClick={() => handleCopyCode(window.location.href)}
-          className="px-3 py-1.5 rounded-lg bg-[#111726] hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 flex items-center gap-2"
-        >
-          <i className="fa-solid fa-share-nodes text-indigo-400"></i> Share Topic
-        </button>
+        <div className="flex items-center gap-3">
+          {availableTopicsForTech.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+                Topic:
+              </span>
+              <select
+                value={topic.id}
+                onChange={(e) => navigate(`/topics/${e.target.value}`)}
+                className="bg-[#111726] border border-slate-700 text-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold focus:border-indigo-500 focus:outline-none shadow-inner cursor-pointer"
+              >
+                {availableTopicsForTech.map((t, idx) => (
+                  <option key={t.id} value={t.id}>
+                    {idx + 1}. {t.title} ({t.difficulty})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <button
+            onClick={() => handleCopyCode(window.location.href)}
+            className="px-3 py-1.5 rounded-lg bg-[#111726] hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 flex items-center gap-2"
+          >
+            <i className="fa-solid fa-share-nodes text-indigo-400"></i> Share Topic
+          </button>
+        </div>
       </div>
 
       {/* Topic Header Card */}
