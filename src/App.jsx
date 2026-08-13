@@ -8,6 +8,7 @@ import TechnologiesPage from './pages/TechnologiesPage';
 import RoadmapsPage from './pages/RoadmapsPage';
 import TopicsPage from './pages/TopicsPage';
 import IntegrationPage from './pages/IntegrationPage';
+import QnaPage from './pages/QnaPage';
 
 export default function App() {
   return (
@@ -22,6 +23,8 @@ export default function App() {
           <Route path="/topics" element={<TopicsPage />} />
           <Route path="/topics/:topicId" element={<TopicsPage />} />
           <Route path="/integration" element={<IntegrationPage />} />
+          <Route path="/qna" element={<QnaPage />} />
+          <Route path="/qna/:techId" element={<QnaPage />} />
           <Route path="*" element={<Navigate to="/technologies" replace />} />
         </Route>
       </Routes>

@@ -6,7 +6,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
     { path: '/technologies', label: 'Technologies', icon: 'fa-solid fa-layer-group' },
     { path: '/roadmaps', label: 'Roadmaps', icon: 'fa-solid fa-route' },
     { path: '/topics', label: 'Topic Page', icon: 'fa-solid fa-book-open' },
-    { path: '/integration', label: 'Integration', icon: 'fa-solid fa-diagram-project' }
+    { path: '/integration', label: 'Integration', icon: 'fa-solid fa-diagram-project' },
+    { path: '/qna', label: 'Interview Q&A', icon: 'fa-solid fa-clipboard-question' }
   ];
 
   const sidebarContent = (
