@@ -14,7 +14,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#090d16]/90 backdrop-blur-md border-b border-slate-800/90 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-sm">
+    <header className="sticky top-0 z-30 bg-[#090d16]/90 backdrop-blur-md border-b border-slate-800/90 px-3 sm:px-4 md:px-6 py-3.5 flex items-center justify-between shadow-sm">
       {/* Left: Mobile Menu Toggle & Active Page Title */}
       <div className="flex items-center gap-3">
         <button
