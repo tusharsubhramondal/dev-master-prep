@@ -13,6 +13,12 @@ import { gitTopics } from './topics/gitTopics.js';
 import { linuxTopics } from './topics/linuxTopics.js';
 import { awsTopics } from './topics/awsTopics.js';
 import { restTopics } from './topics/restTopics.js';
+import { graphqlTopics } from './topics/graphqlTopics.js';
+import { systemDesignTopics } from './topics/systemDesignTopics.js';
+import { microservicesTopics } from './topics/microservicesTopics.js';
+import { expressTopics } from './topics/expressTopics.js';
+import { vueTopics } from './topics/vueTopics.js';
+import { nextjsTopics } from './topics/nextjsTopics.js';
 
 export const topicsData = {
   ...javascriptTopics,
@@ -28,5 +34,11 @@ export const topicsData = {
   ...gitTopics,
   ...linuxTopics,
   ...awsTopics,
-  ...restTopics
+  ...restTopics,
+  ...graphqlTopics,
+  ...systemDesignTopics,
+  ...microservicesTopics,
+  ...expressTopics,
+  ...vueTopics,
+  ...nextjsTopics
 };
