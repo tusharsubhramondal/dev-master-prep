@@ -1,9 +1,9 @@
 {
-  "name": "appzone-interview-prep",
+  "name": "Developer Learning & Interview Preparation Platform by AppZone",
   "private": true,
   "version": "1.0.0",
   "description": "Developer Learning & Interview Preparation Platform by AppZone",
-  "author": "AppZone",
+  "author": "Tushar Subhra",
   "type": "module",
   "scripts": {
     "dev": "vite",
