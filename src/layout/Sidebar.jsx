@@ -2,67 +2,122 @@ import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
 export default function Sidebar({ mobileOpen, setMobileOpen }) {
-  const navLinks = [
-    { path: '/technologies', label: 'Technologies', icon: 'fa-solid fa-layer-group' },
-    { path: '/roadmaps', label: 'Roadmaps', icon: 'fa-solid fa-route' },
-    { path: '/topics', label: 'Topic Page', icon: 'fa-solid fa-book-open' },
-    { path: '/integration', label: 'Integration', icon: 'fa-solid fa-diagram-project' },
-    { path: '/qna', label: 'Interview Q&A', icon: 'fa-solid fa-clipboard-question' }
+  const mainNavLinks = [
+    { path: '/technologies', label: 'Technologies', icon: 'fa-solid fa-layer-group', badge: '25 Techs' },
+    { path: '/roadmaps', label: 'Roadmaps', icon: 'fa-solid fa-route', badge: 'Roadmaps' },
+    { path: '/topics', label: 'Topic Documentation', icon: 'fa-solid fa-book-open', badge: 'Docs' }
+  ];
+
+  const advancedNavLinks = [
+    { path: '/integration', label: 'Integration Workflows', icon: 'fa-solid fa-diagram-project', badge: 'Pipelines' },
+    { path: '/qna', label: 'Interview Q&A Vault', icon: 'fa-solid fa-clipboard-question', badge: '2,500 Qs' }
   ];
 
   const sidebarContent = (
     <div className="flex flex-col h-full justify-between p-4 space-y-6">
 
-      {/* Brand Logo & Header */}
+      {/* Brand Header */}
       <div className="space-y-6">
         <Link
           to="/technologies"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 text-left w-full group focus:outline-none"
+          className="flex items-center gap-3.5 text-left w-full group focus:outline-none p-2 rounded-xl hover:bg-slate-800/30 transition-all"
         >
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform flex-shrink-0">
+          <div className="w-9 h-9 bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white text-base shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform flex-shrink-0">
             <i className="fa-solid fa-terminal"></i>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
+              <span className="font-extrabold text-sm tracking-tight text-white group-hover:text-indigo-300 transition-colors">
                 DEV MASTER
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
                 PRO
               </span>
             </div>
-            <p className="text-[10px] text-indigo-300 font-semibold">
-              by AppZone
+            <p className="text-[10px] text-slate-400 font-medium">
+              Enterprise Interview Prep
             </p>
           </div>
         </Link>
 
-        {/* Navigation Links */}
+        {/* Section 1: CORE LEARNING */}
         <div className="space-y-1">
-          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 px-3 block mb-2">
-            Main Menu
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 px-3 block mb-2">
+            Core Learning
           </span>
           <nav className="space-y-1">
-            {navLinks.map((link) => (
+            {mainNavLinks.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${isActive
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 font-bold border border-indigo-400/30'
-                    : 'text-slate-300 hover:text-white hover:bg-[#172033]'
+                  `relative w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
+                    isActive
+                      ? 'bg-indigo-500/10 text-white font-bold border border-indigo-500/20 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/40'
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
+                    {isActive && (
+                      <span className="absolute left-0 top-2 bottom-2 w-1 bg-indigo-500 rounded-r-full"></span>
+                    )}
                     <div className="flex items-center gap-3">
-                      <i className={`${link.icon} text-sm ${isActive ? 'text-white' : 'text-indigo-400'}`}></i>
+                      <i className={`${link.icon} text-sm ${isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`}></i>
                       <span>{link.label}</span>
                     </div>
-                    {isActive && <i className="fa-solid fa-chevron-right text-[10px]"></i>}
+                    {link.badge && (
+                      <span className={`text-[9px] font-bold font-mono px-1.5 py-0.5 rounded ${
+                        isActive ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800/80 text-slate-400'
+                      }`}>
+                        {link.badge}
+                      </span>
+                    )}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
+        {/* Section 2: ADVANCED & PRACTICE */}
+        <div className="space-y-1 pt-2">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 px-3 block mb-2">
+            Advanced & Practice
+          </span>
+          <nav className="space-y-1">
+            {advancedNavLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `relative w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
+                    isActive
+                      ? 'bg-indigo-500/10 text-white font-bold border border-indigo-500/20 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/40'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span className="absolute left-0 top-2 bottom-2 w-1 bg-indigo-500 rounded-r-full"></span>
+                    )}
+                    <div className="flex items-center gap-3">
+                      <i className={`${link.icon} text-sm ${isActive ? 'text-indigo-400' : 'text-slate-500'}`}></i>
+                      <span>{link.label}</span>
+                    </div>
+                    {link.badge && (
+                      <span className={`text-[9px] font-bold font-mono px-1.5 py-0.5 rounded ${
+                        isActive ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800/80 text-slate-400'
+                      }`}>
+                        {link.badge}
+                      </span>
+                    )}
                   </>
                 )}
               </NavLink>
@@ -71,13 +126,19 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
         </div>
       </div>
 
-      {/* Sidebar Footer Controls */}
-      <div className="pt-4 border-t border-slate-800/80 space-y-3">
-        <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-[11px] text-slate-300 space-y-1">
-          <div className="font-bold text-indigo-300 flex items-center gap-1.5">
-            <i className="fa-solid fa-bolt"></i> 3-Level Progression
+      {/* Footer Widget */}
+      <div className="pt-4 border-t border-slate-800/60 space-y-3">
+        <div className="p-3 rounded-xl bg-[#090d16] border border-slate-800/80 text-[11px] text-slate-300 space-y-1.5">
+          <div className="font-bold text-indigo-300 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Platform Active
+            </span>
+            <span className="text-[9px] text-slate-400 font-mono">v2.4</span>
           </div>
-          <p className="text-slate-400 text-[10px]">Beginner → Intermediate → Senior</p>
+          <p className="text-slate-400 text-[10px] leading-tight">
+            25 Stacks • 2,500 Top Q&As • Complete Code Flows
+          </p>
         </div>
       </div>
 
@@ -87,7 +148,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
   return (
     <>
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 bg-[#111726] border-r border-slate-800/80 shadow-2xl">
+      <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 bg-[#0c101a] border-r border-slate-800/80 shadow-2xl">
         {sidebarContent}
       </aside>
 
@@ -98,7 +159,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
           onClick={() => setMobileOpen(false)}
         >
           <div
-            className="w-72 bg-[#111726] h-full shadow-2xl"
+            className="w-72 bg-[#0c101a] h-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {sidebarContent}

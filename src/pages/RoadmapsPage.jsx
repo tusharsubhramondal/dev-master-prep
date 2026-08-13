@@ -93,7 +93,7 @@ export default function RoadmapsPage() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-8 animate-fade-in pb-16">
 
       {/* Header Panel */}
       <div className="glass-panel p-6 sm:p-8 rounded-2xl space-y-4">

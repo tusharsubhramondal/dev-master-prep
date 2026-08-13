@@ -76,7 +76,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
   );
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-7xl mx-auto">
+    <div className="space-y-8 animate-fade-in pb-16">
 
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
