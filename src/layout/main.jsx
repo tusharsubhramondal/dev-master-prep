@@ -18,7 +18,7 @@ export default function Main() {
             <div className="flex-1 md:pl-64 flex flex-col min-h-screen">
 
                 {/* 2. TOP STICKY HEADER COMPONENT */}
-                <Header />
+                <Header setMobileOpen={setMobileOpen} />
 
                 {/* 3. MAIN CONTENT AREA */}
                 <main className="flex-1 px-3 sm:px-4 md:px-6 py-6 max-w-[1600px] w-full mx-auto animate-fade-in">

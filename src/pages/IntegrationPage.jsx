@@ -570,53 +570,52 @@ npx prisma db pull                  # Introspect existing database schema`
   const current = integrations[activeTech];
 
   return (
-    <div className="space-y-8 animate-fade-in pb-16">
+    <div className="space-y-6 animate-fade-in pb-16">
       
       {/* Header Banner */}
-      <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/60 to-slate-900 border border-indigo-500/20 p-8 overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="relative rounded-2xl bg-[#121722] border border-slate-800/80 p-6 sm:p-8 overflow-hidden shadow-xl">
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold">
             <i className="fa-solid fa-diagram-project"></i> Integration Workflows & Execution Pipelines
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Message Queues & Event Streaming Integrations
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
             Explore complete end-to-end working flow examples for high-performance event streaming and task queuing engines. Compare architectures and copy production-ready code for <strong className="text-emerald-400">Node.js</strong> and <strong className="text-red-400">Laravel</strong>.
           </p>
         </div>
       </div>
 
-      {/* Technology Selector Tabs */}
-      <div className="flex flex-wrap gap-3">
+      {/* Technology Selector Tabs - Refined Compact Pills */}
+      <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
         {Object.values(integrations).map((tech) => (
           <button
             key={tech.id}
             onClick={() => { setActiveTech(tech.id); setActiveStep('overview'); }}
-            className={`flex items-center gap-3 px-5 py-3 rounded-xl border text-sm font-bold transition-all shadow-md ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition-all shadow-sm ${
               activeTech === tech.id
-                ? 'bg-indigo-600 text-white border-indigo-400 shadow-indigo-600/30 scale-[1.02]'
-                : 'bg-[#111726] text-slate-300 hover:text-white border-slate-800 hover:bg-[#172033]'
+                ? 'bg-indigo-600 text-white border-indigo-500 shadow-indigo-600/20'
+                : 'bg-[#121722] text-slate-300 hover:text-white border-slate-800 hover:bg-slate-800/40'
             }`}
           >
-            <i className={`${tech.icon} text-lg`}></i>
+            <i className={`${tech.icon} text-sm`}></i>
             <span>{tech.name}</span>
           </button>
         ))}
       </div>
 
       {/* Main Integration Card */}
-      <div className={`rounded-2xl bg-gradient-to-b ${current.accent} border ${current.borderColor} p-6 sm:p-8 space-y-8 shadow-2xl`}>
+      <div className="rounded-2xl bg-[#121722] border border-slate-800/80 p-5 sm:p-7 space-y-6 shadow-xl">
         
-        {/* Card Title & Badge */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-2xl shadow-inner">
+        {/* Card Title & Language Switcher */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl shadow-inner flex-shrink-0">
               <i className={current.icon}></i>
             </div>
             <div>
-              <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
                 {current.name} Integration
               </h2>
               <span className="text-xs font-semibold text-slate-400">{current.badge}</span>
@@ -624,10 +623,10 @@ npx prisma db pull                  # Introspect existing database schema`
           </div>
 
           {/* Language Switcher */}
-          <div className="flex items-center bg-[#090d16] p-1 rounded-xl border border-slate-800 self-start sm:self-auto">
+          <div className="flex items-center bg-[#0b0e14] p-1 rounded-xl border border-slate-800 self-start sm:self-auto">
             <button
               onClick={() => setActiveLang('node')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 activeLang === 'node'
                   ? 'bg-emerald-600 text-white shadow'
                   : 'text-slate-400 hover:text-white'
@@ -637,7 +636,7 @@ npx prisma db pull                  # Introspect existing database schema`
             </button>
             <button
               onClick={() => setActiveLang('laravel')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 activeLang === 'laravel'
                   ? 'bg-red-600 text-white shadow'
                   : 'text-slate-400 hover:text-white'
@@ -649,79 +648,79 @@ npx prisma db pull                  # Introspect existing database schema`
         </div>
 
         {/* First Paragraph: Detailed Architecture & How It Works */}
-        <div className="space-y-3 bg-[#090d16]/80 p-6 rounded-xl border border-slate-800 shadow-inner">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-2">
+        <div className="space-y-2 bg-[#0b0e14] p-5 rounded-xl border border-slate-800/80 shadow-inner">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-2">
             <i className="fa-solid fa-circle-info"></i> What is {current.name} & How It Works in Detail
           </h3>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal">
+          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-sans">
             {current.overview}
           </p>
         </div>
 
         {/* Execution Flow Steps Navigation */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">
-            Complete Execution Workflow Steps:
+        <div className="space-y-3">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Execution Flow Steps:
           </h3>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               onClick={() => setActiveStep('overview')}
-              className={`p-3 rounded-xl border text-left transition-all ${
+              className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all ${
                 activeStep === 'overview'
-                  ? 'bg-indigo-600/20 border-indigo-500 text-white font-bold'
-                  : 'bg-[#111726] border-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-indigo-500/10 border-indigo-500 text-white font-bold'
+                  : 'bg-[#0b0e14] border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <div className="text-[10px] uppercase font-bold text-indigo-400">Step 1</div>
-              <div className="text-xs font-semibold truncate">Infrastructure Setup</div>
+              <div className="text-[9px] uppercase font-bold text-indigo-400">Step 1</div>
+              <div className="text-xs font-semibold truncate">Architecture Flow</div>
             </button>
 
             <button
               onClick={() => setActiveStep('producer')}
-              className={`p-3 rounded-xl border text-left transition-all ${
+              className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all ${
                 activeStep === 'producer'
-                  ? 'bg-indigo-600/20 border-indigo-500 text-white font-bold'
-                  : 'bg-[#111726] border-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-indigo-500/10 border-indigo-500 text-white font-bold'
+                  : 'bg-[#0b0e14] border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <div className="text-[10px] uppercase font-bold text-emerald-400">Step 2</div>
+              <div className="text-[9px] uppercase font-bold text-emerald-400">Step 2</div>
               <div className="text-xs font-semibold truncate">Producer ({activeLang === 'node' ? 'Node.js' : 'Laravel'})</div>
             </button>
 
             <button
               onClick={() => setActiveStep('consumer')}
-              className={`p-3 rounded-xl border text-left transition-all ${
+              className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all ${
                 activeStep === 'consumer'
-                  ? 'bg-indigo-600/20 border-indigo-500 text-white font-bold'
-                  : 'bg-[#111726] border-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-indigo-500/10 border-indigo-500 text-white font-bold'
+                  : 'bg-[#0b0e14] border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <div className="text-[10px] uppercase font-bold text-amber-400">Step 3</div>
+              <div className="text-[9px] uppercase font-bold text-amber-400">Step 3</div>
               <div className="text-xs font-semibold truncate">Consumer / Worker</div>
             </button>
 
             <button
               onClick={() => setActiveStep('docker')}
-              className={`p-3 rounded-xl border text-left transition-all ${
+              className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all ${
                 activeStep === 'docker'
-                  ? 'bg-indigo-600/20 border-indigo-500 text-white font-bold'
-                  : 'bg-[#111726] border-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-indigo-500/10 border-indigo-500 text-white font-bold'
+                  : 'bg-[#0b0e14] border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <div className="text-[10px] uppercase font-bold text-sky-400">Step 4</div>
+              <div className="text-[9px] uppercase font-bold text-sky-400">Step 4</div>
               <div className="text-xs font-semibold truncate">Docker Compose</div>
             </button>
           </div>
         </div>
 
         {/* Code Content Container */}
-        <div className="bg-[#090d16] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
-          <div className="bg-[#111726] px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-[#0b0e14] rounded-xl border border-slate-800/80 overflow-hidden shadow-xl">
+          <div className="bg-[#121722] px-4 py-2.5 border-b border-slate-800/80 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-rose-500"></span>
-              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-              <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
               <span className="ml-2 text-xs font-mono text-slate-400">
                 {activeStep === 'docker'
                   ? 'docker-compose.yml'
@@ -732,7 +731,7 @@ npx prisma db pull                  # Introspect existing database schema`
                   : 'architecture-flow.md'}
               </span>
             </div>
-            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
               {activeLang === 'node' ? 'Node.js ESM' : 'Laravel PHP 8.2+'}
             </span>
           </div>
