@@ -21,7 +21,7 @@ export default function Main() {
                 <Header />
 
                 {/* 3. MAIN CONTENT AREA */}
-                <main className="flex-1 px-4 sm:px-8 py-6 max-w-7xl w-full mx-auto animate-fade-in">
+                <main className="flex-1 px-3 sm:px-4 md:px-6 py-6 max-w-[1600px] w-full mx-auto animate-fade-in">
                     <Outlet />
                 </main>
 
