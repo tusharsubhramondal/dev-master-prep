@@ -43,7 +43,7 @@ export const roadmapsData = {
     techId: "nodejs",
     title: "Node.js Backend Engineer Roadmap",
     steps: [
-      { step: 1, title: "JavaScript ES6+ Core", desc: "Prototypes, Closures, Promises, Async/Await.", topicId: "javascript-closure", level: "Beginner" },
+      { step: 1, title: "JavaScript ES6+ Core", desc: "Prototypes, Closures, Promises, Async/Await.", topicId: "nodejs-es6", level: "Beginner" },
       { step: 2, title: "Node Fundamentals", desc: "Global Objects, Process, Buffer, Path, FS modules.", topicId: "nodejs-fundamentals", level: "Beginner" },
       { step: 3, title: "Modules & NPM", desc: "CommonJS vs ESM, package.json, NPM scripts, semantic versioning.", topicId: "nodejs-modules", level: "Beginner" },
       { step: 4, title: "Async Programming & Streams", desc: "Readable, Writable, Transform streams, Backpressure handling.", topicId: "nodejs-streams", level: "Intermediate" },

@@ -1,152 +1,317 @@
-# Complete JavaScript Interview Master Guide (Junior → Mid → Senior → Lead Level) — বিস্তারিত ব্যাখ্যাসহ অল-ইন-ওয়ান হ্যান্ডবুক
+# Complete JavaScript Interview Master Guide
 
-> **লক্ষ্য:** এই গাইডটি এমনভাবে বিস্তৃত ব্যাখ্যা, V8 ইঞ্জিনের মেকানিজম, ইভেন্ট লুপের ডিপ-ডাইভ, মেমোরি ম্যানেজমেন্ট, পলিফিল এবং ব্যবহারিক কোডসহ তৈরি করা হয়েছে যাতে যে কেউ (শিক্ষানবিস থেকে সিনিয়র জাভাস্ক্রিপ্ট আর্কিটেক্ট) জাভাস্ক্রিপ্টের যেকোনো ইন্টারভিউ ক্র্যাক করতে পারেন।
-
----
-
-## 📑 সূচিপত্র (Table of Contents)
-
-1. [Module 1: JS Engine, Execution Context & Hoisting](#module-1-js-engine-execution-context--hoisting)
-2. [Module 2: Scopes, Closures & Lexical Environment](#module-2-scopes-closures--lexical-environment)
-3. [Module 3: Functions, `this` Keyword & Prototypes](#module-3-functions-this-keyword--prototypes)
-4. [Module 4: Asynchronous JavaScript & Event Loop (Deep Dive)](#module-4-asynchronous-javascript--event-loop)
-5. [Module 5: ES6+ Modern JavaScript Mastery](#module-5-es6-modern-javascript-mastery)
-6. [Module 6: DOM, Event Bubbling, Delegation, Debounce & Throttle](#module-6-dom-event-bubbling-delegation-debounce--throttle)
-7. [Module 7: Memory Management & V8 Engine Optimization](#module-7-memory-management--v8-engine-optimization)
-8. [Module 8: Polyfills & Tricky Coding Scenarios](#module-8-polyfills--tricky-coding-scenarios)
-9. [Module 9: Complete Level-by-Level Question Vault](#module-9-complete-level-by-level-question-vault)
+> A comprehensive, senior-level interview preparation handbook covering core fundamentals, V8 engine internals, asynchronous architecture, memory mechanics, design patterns, polyfills, and interview coding challenges.
 
 ---
 
-# Module 1: JS Engine, Execution Context & Hoisting
+## 📑 Table of Contents
 
-### 1.1 JavaScript Engine কী এবং কীভাবে কাজ করে?
+1. [Variables & Data Types](#1-variables--data-types)
+2. [Operators & Control Flow](#2-operators--control-flow)
+3. [Scopes & Scope Chain](#3-scopes--scope-chain)
+4. [Hoisting & Temporal Dead Zone (TDZ)](#4-hoisting--temporal-dead-zone-tdz)
+5. [Object & Array Methods](#5-object--array-methods)
+6. [Destructuring, Spread & Rest Operators](#6-destructuring-spread--rest-operators)
+7. [Closures & Lexical Scope](#7-closures--lexical-scope)
+8. [`this` Keyword Binding Rules](#8-this-keyword-binding-rules)
+9. [`call`, `apply`, and `bind` (With Polyfills)](#9-call-apply-and-bind-with-polyfills)
+10. [Asynchronous JavaScript Architecture](#10-asynchronous-javascript-architecture)
+11. [Callbacks & Callback Hell](#11-callbacks--callback-hell)
+12. [Promises & Async / Await](#12-promises--async--await)
+13. [The Event Loop Mechanics](#13-the-event-loop-mechanics)
+14. [Microtask Queue vs Macrotask Queue](#14-microtask-queue-vs-macrotask-queue)
+15. [DOM, BOM & Event Delegation](#15-dom-bom--event-delegation)
+16. [Advanced Concepts: Debouncing, Throttling, Memoization, Currying, Garbage Collection & Memory Leaks](#16-advanced-concepts)
 
-JavaScript হলো একটি **Single-Threaded**, **Synchronous**, **Interpreted / JIT-Compiled** প্রোগ্রামিং ল্যাঙ্গুয়েজ।  
-জনপ্রিয় ইঞ্জিনের মধ্যে গুগল ক্রোম ও নোড-জেএস-এর **V8 Engine** অন্যতম।
+---
 
+## 1. Variables & Data Types
+
+### 1.1 Primitive vs Reference Types
+
+JavaScript data is categorized into **7 Primitive Types** and **Reference Objects**.
+
+| Metric | Primitive Data Types | Reference Object Types |
+| :--- | :--- | :--- |
+| **Types** | `string`, `number`, `bigint`, `boolean`, `undefined`, `symbol`, `null` | `Object`, `Array`, `Function`, `Date`, `Map`, `Set` |
+| **Memory Allocation** | Call Stack (Direct value storage) | Heap Memory (Address Pointer on Call Stack) |
+| **Mutability** | Immutable (Raw value cannot be mutated) | Mutable (Properties can be added, deleted, or altered) |
+| **Copy Behavior** | Copy by Value | Copy by Memory Reference Pointer |
+| **Equality Check (`===`)** | Compares raw literal values | Compares memory reference addresses |
+
+```javascript
+// Primitive: Copy by Value
+let a = 10;
+let b = a;
+b = 20;
+console.log(a); // 10 (a is untouched)
+
+// Reference: Copy by Pointer
+let user1 = { name: "Alice" };
+let user2 = user1; // Both point to same Heap Address 0x0041
+user2.name = "Bob";
+console.log(user1.name); // "Bob" (Mutated!)
 ```
-JS Source Code ➔ Parser ➔ AST (Abstract Syntax Tree) ➔ Interpreter (Ignition) ➔ JIT Compiler (TurboFan) ➔ Machine Code
-```
 
-- **Memory Heap:** অবজেক্ট, ফাংশন ও রেফারেন্স ডাটা সংরক্ষণের জন্য ব্যবহৃত অনিয়মিত মেমোরি স্থান।
-- **Call Stack:** এলআইএফও (LIFO - Last In First Out) নীতিতে কাজ করা স্টক যা বর্তমানে কোন ফাংশন এক্সিকিউট হচ্ছে তা ট্র্যাক করে।
+### 1.2 `var` vs `let` vs `const`
+
+| Feature | `var` | `let` | `const` |
+| :--- | :--- | :--- | :--- |
+| **Scope** | Function Scoped | Block Scoped `{}` | Block Scoped `{}` |
+| **Hoisting** | Hoisted with `undefined` | Hoisted into TDZ | Hoisted into TDZ |
+| **Re-declaration** | Allowed in same scope | Throws `SyntaxError` | Throws `SyntaxError` |
+| **Re-assignment** | Allowed | Allowed | Disallowed (Immutable Binding) |
+
+> ⚠️ **Key Interview Note:** `const` creates an **immutable reference binding**, NOT an immutable object. Properties inside a `const obj = {}` can still be mutated (`obj.age = 25`). Use `Object.freeze(obj)` for true runtime immutability.
+
+### 1.3 `typeof` Quirks & Edge Cases
+
+```javascript
+typeof "text"        // "string"
+typeof 42            // "number"
+typeof 10n           // "bigint"
+typeof true          // "boolean"
+typeof undefined     // "undefined"
+typeof Symbol("id")  // "symbol"
+typeof function(){}  // "function"
+
+// Quirks
+typeof null          // "object"  <-- Historical 1995 JS Bug (0x00 null pointer)
+typeof NaN           // "number"  <-- Represented as "Not-a-Number" IEEE 754 float
+typeof []            // "object"  <-- Use Array.isArray([]) to check arrays
+
+// NaN Rules
+NaN === NaN          // false! (Use Number.isNaN(val) or Object.is(val, NaN))
+```
 
 ---
 
-### 1.2 Execution Context (পর্দার পেছনের রেন্ডারিং)
+## 2. Operators & Control Flow
 
-জাভাস্ক্রিপ্ট কোড রান হওয়ার সময় **Execution Context** তৈরি হয়। এটি ২টি ধাপে কাজ করে:
+### 2.1 Equality: `==` vs `===`
+
+- `==` (Abstract Equality): Performs **Type Coercion** before comparing.
+- `===` (Strict Equality): Compares both **Type** and **Value** without coercion.
+
+```javascript
+5 == "5"           // true  (Coerces string "5" to number 5)
+5 === "5"          // false (Types differ: number vs string)
+
+null == undefined  // true
+null === undefined // false
+
+0 == false         // true
+0 === false        // false
+```
+
+### 2.2 Short-Circuiting & Nullish Coalescing (`??`)
+
+```javascript
+// Logical OR (||): Returns right side for ANY falsy value (false, 0, "", null, undefined, NaN)
+const port1 = process.env.PORT || 3000;
+
+// Nullish Coalescing (??): Returns right side ONLY for null or undefined
+const port2 = 0 ?? 3000; // 0 (Preserves valid falsy 0)
+const text = "" ?? "Default"; // "" (Preserves empty string)
+
+// Optional Chaining (?.): Prevents "Cannot read properties of undefined"
+const city = user?.address?.city;
+const firstItem = items?.[0];
+const result = customMethod?.();
+```
+
+---
+
+## 3. Scopes & Scope Chain
+
+Scope defines the accessibility of variables during execution.
+
+### 3.1 Scope Types
+1. **Global Scope:** Accessible anywhere in the application.
+2. **Function Scope:** Variables declared with `var`, `let`, or `const` inside a function are accessible only within that function.
+3. **Block Scope:** Variables declared with `let` and `const` inside `{}` blocks (if statements, loops) exist only within those brackets.
+
+### 3.2 Scope Chain & Lexical Environment
+
+When a variable is resolved, JS checks:
+1. Current Local Scope
+2. Enclosing Parent Scope(s)
+3. Global Scope
+
+If not found in any scope, JS throws a `ReferenceError`.
+
+```javascript
+const globalVar = "Global";
+
+function outer() {
+  const outerVar = "Outer";
+  
+  function inner() {
+    const innerVar = "Inner";
+    console.log(innerVar, outerVar, globalVar); // Resolves up the Scope Chain
+  }
+  inner();
+}
+outer();
+```
+
+---
+
+## 4. Hoisting & Temporal Dead Zone (TDZ)
+
+### 4.1 Execution Context Phases
+When JavaScript runs a function or script, V8 creates an **Execution Context** in 2 phases:
+1. **Creation Phase (Memory Allocation):** Scans code, sets up scope chain, allocates memory for variables and functions.
+2. **Execution Phase:** Executes code line-by-line, assigning values and running function calls.
 
 ```
 ┌────────────────────────────────────────────────────────┐
 │ Global / Function Execution Context                    │
 ├────────────────────────────┬───────────────────────────┤
-1. Creation Phase (Memory)   │ 2. Execution Phase (Code) │
+│ 1. Creation Phase (Memory) │ 2. Execution Phase (Code) │
 ├────────────────────────────┼───────────────────────────┤
-│ - Variable Hoisting        │ - Code executed line      │
-│   (var = undefined)        │   by line                 │
-│   (let/const = uninit)     │ - Variables assigned      │
-│ - Function Declarations    │ - Functions invoked       │
-│ - Scope Chain setup        │                           │
-│ - 'this' Binding           │                           │
+│ var x = undefined          │ x = 10                    │
+│ let y = <Uninitialized>    │ y = 20                    │
+│ fn() = Memory Ref          │ fn() called               │
 └────────────────────────────┴───────────────────────────┘
 ```
 
----
-
-### 1.3 Hoisting এবং Temporal Dead Zone (TDZ)
-
-**Hoisting কী?**  
-কোড এক্সিকিউশনের পূর্বে **Creation Phase**-এ জাভাস্ক্রিপ্ট ইঞ্জিন ভ্যারিয়েবল এবং ফাংশন ডিক্লারেশনকে মেমোরিতে উপরে তুলে নেওয়ার ভান করে।
+### 4.2 Hoisting Rules
+- **Function Declarations:** Fully hoisted (can be called before line of definition).
+- **`var` Variables:** Hoisted and initialized to `undefined`.
+- **`let` & `const` Variables:** Hoisted into the **Temporal Dead Zone (TDZ)** without initialization.
 
 ```javascript
-console.log(a); // undefined (`var` ডিক্লেয়ার হওয়ার আগেই এক্সেস করা সম্ভব)
-var a = 10;
+greet(); // "Hello!" (Function declaration fully hoisted)
+function greet() { console.log("Hello!"); }
+
+console.log(a); // undefined (var hoisted)
+var a = 5;
 
 console.log(b); // ReferenceError: Cannot access 'b' before initialization
-let b = 20;
+let b = 10;     // <-- TDZ ends here
 ```
-
-**Temporal Dead Zone (TDZ) কী?**  
-`let` এবং `const` দিয়ে ডিক্লেয়ার করা ভ্যারিয়েবলও হোইস্ট হয়, কিন্তু সেগুলো মেমোরিতে **Uninitialized** অবস্থায় থাকে। স্কোপের শুরু থেকে ভ্যারিয়েবলের প্রকৃত ডিক্লারেশনের লাইন পর্যন্ত সময়টুকুকে **TDZ** বলে। এই সময়ের মধ্যে এক্সেস করতে গেলে `ReferenceError` দেয়।
 
 ---
 
-### 1.4 Primitive vs Reference Data Types (Memory Allocation)
+## 5. Object & Array Methods
 
-- **Primitive Types (Number, String, Boolean, null, undefined, Symbol, BigInt):** সরাসরি **Call Stack**-এ মান হিসেব করে স্টোর হয় (Value copy হয়)।
-- **Reference Types (Object, Array, Function):** আসল ডাটা স্টোর হয় **Memory Heap**-এ এবং তার মেমোরি এড্রেস/রেফারেন্স থাকে Call Stack-এ।
+### 5.1 Array Transformation Methods (`map`, `filter`, `reduce`)
 
 ```javascript
-let x = 10;
-let y = x; // Value Copy: y হবে 10
+const numbers = [1, 2, 3, 4, 5];
 
-let obj1 = { name: "Tushar" };
-let obj2 = obj1; // Reference Copy: obj2 একই মেমোরি এড্রেস পয়েন্ট করে
-obj2.name = "Karim";
-console.log(obj1.name); // "Karim" (উভয় স্থান থেকেই বদলে যাবে!)
+// map: Returns new array transformed
+const doubled = numbers.map(num => num * 2); // [2, 4, 6, 8, 10]
+
+// filter: Returns new array matching condition
+const evens = numbers.filter(num => num % 2 === 0); // [2, 4]
+
+// reduce: Accumulates array to single result
+const sum = numbers.reduce((acc, num) => acc + num, 0); // 15
+```
+
+### 5.2 `slice` vs `splice`
+
+| Method | Mutates Original Array? | Purpose | Returns |
+| :--- | :--- | :--- | :--- |
+| `slice(start, end)` | ❌ No | Extracts a shallow copy section of an array | New sliced array |
+| `splice(start, count, ...items)` | ✅ Yes | Removes, replaces, or adds elements in place | Removed elements array |
+
+```javascript
+const arr = [10, 20, 30, 40, 50];
+
+// slice (non-mutating)
+const sliced = arr.slice(1, 4); // [20, 30, 40], arr remains [10, 20, 30, 40, 50]
+
+// splice (mutating)
+const removed = arr.splice(1, 2, 99); // Removes 20, 30 and inserts 99 -> arr becomes [10, 99, 40, 50]
+```
+
+### 5.3 Object Helper Methods
+
+```javascript
+const user = { name: "Alice", age: 28, role: "Developer" };
+
+Object.keys(user);    // ["name", "age", "role"]
+Object.values(user);  // ["Alice", 28, "Developer"]
+Object.entries(user); // [["name", "Alice"], ["age", 28], ["role", "Developer"]]
 ```
 
 ---
 
-# Module 2: Scopes, Closures & Lexical Environment
+## 6. Destructuring, Spread & Rest Operators
 
-### 2.1 Lexical Scope এবং Scope Chain
-- **Lexical Scope:** একটি ফাংশন কোডের কোথায় সংজ্ঞায়িত করা হয়েছে তার ওপর ভিত্তি করে তার স্কোপ নির্ধারিত হয়।
-- **Scope Chain:** যদি কোনো ভ্যারিয়েবল বর্তমান ফাংশন স্কোপে না পাওয়া যায়, তবে জাভাস্ক্রিপ্ট তার অভিভাবক (Parent/Outer) স্কোপে খুঁজতে থাকে। এই চেইন গ্লোবাল স্কোপ পর্যন্ত গিয়ে থামে।
+### 6.1 Destructuring
+```javascript
+// Object Destructuring
+const person = { name: "Sarah", age: 30, address: { city: "NY" } };
+const { name: fullName, address: { city }, country = "USA" } = person;
+console.log(fullName, city, country); // Sarah NY USA
+
+// Array Destructuring
+const rgb = [255, 128, 0];
+const [r, g, b, alpha = 1] = rgb;
+```
+
+### 6.2 Spread vs Rest (`...`)
+
+- **Spread (`...`):** Expands arrays or objects into individual elements (used in copies, merges, function calls).
+- **Rest (`...`):** Condenses multiple individual elements into a single array parameter.
+
+```javascript
+// Spread: Merging Objects (Shallow Copy)
+const obj1 = { a: 1 };
+const obj2 = { b: 2 };
+const merged = { ...obj1, ...obj2 }; // { a: 1, b: 2 }
+
+// Rest: Collecting function arguments
+function sumAll(first, ...restNumbers) {
+  return restNumbers.reduce((acc, n) => acc + n, first);
+}
+console.log(sumAll(10, 20, 30)); // 60
+```
 
 ---
 
-### 2.2 Closure (গভীর ব্যাখ্যা)
+## 7. Closures & Lexical Scope
 
-**সংজ্ঞা:**  
-যখন একটি Inner Function তার Outer Function-এর স্কোপ বা ভ্যারিয়েবলকে মনে রাখে (এমনকি Outer Function-এর এক্সিকিউশন কল স্ট্যাক থেকে শেষ হয়ে যাওয়ার পরেও), তাকে **Closure** বলে।
+### 7.1 What is a Closure?
+A **closure** is a function bundled together with references to its surrounding lexical environment. An inner function retains access to variables declared in its parent outer function even after the outer function has finished executing and returned.
 
-**কোড উদাহরণ (Private Counter):**
 ```javascript
 function createCounter() {
-  let count = 0; // Private Variable (বাহির থেকে সরাসরি পরিবর্তন করা অসম্ভব)
-
+  let count = 0; // Private state variable
+  
   return {
-    increment: function() {
-      count++;
-      return count;
-    },
-    decrement: function() {
-      count--;
-      return count;
-    },
-    getCount: function() {
-      return count;
-    }
+    increment() { return ++count; },
+    decrement() { return --count; },
+    getCount()   { return count; }
   };
 }
 
 const counter = createCounter();
 console.log(counter.increment()); // 1
 console.log(counter.increment()); // 2
-console.log(counter.count);       // undefined (প্রাইভেট ডাটা নিরাপদ!)
+console.log(counter.count);       // undefined (Encapsulated private state!)
 ```
 
----
-
-### 2.3 Classic Loop Interview Tricky Question
+### 7.2 Classic Closure Loop Trap
 
 ```javascript
-// ❌ সমস্যা (var ফাংশন স্কোপড হওয়ায় Closure-এ শেষ মান ৩ থেকে যায়)
+// Problem: var is function-scoped. Loop finishes before setTimeout triggers (i becomes 3)
 for (var i = 0; i < 3; i++) {
   setTimeout(() => console.log(i), 1000);
 }
-// আউটপুট: 3, 3, 3 (১ সেকেন্ড পর)
+// Output after 1 sec: 3, 3, 3
 
-// ✅ সমাধান ১: `let` ব্যবহার করা (Block Scope নতুন বাইন্ডিং তৈরি করে)
+// Solution 1: Use block-scoped `let`
 for (let i = 0; i < 3; i++) {
   setTimeout(() => console.log(i), 1000);
 }
-// আউটপুট: 0, 1, 2
+// Output after 1 sec: 0, 1, 2
 
-// ✅ সমাধান ২: IIFE (Immediately Invoked Function Expression) দিয়ে Closure তৈরি
+// Solution 2: Use IIFE to create closed scope per iteration
 for (var i = 0; i < 3; i++) {
   (function(j) {
     setTimeout(() => console.log(j), 1000);
@@ -156,286 +321,385 @@ for (var i = 0; i < 3; i++) {
 
 ---
 
-# Module 3: Functions, `this` Keyword & Prototypes
+## 8. `this` Keyword Binding Rules
 
-### 3.1 Regular Function বনাম Arrow Function
+The value of `this` is determined by **how a function is invoked** at call time.
 
-| ফিচার | Regular Function | Arrow Function `() => {}` |
-| :--- | :--- | :--- |
-| **`this` Binding** | যেভাবে কল করা হয় তার ওপর ভিত্তি করে ডাইনামিক হয় | Lexical `this` (বাইরের স্কোপের `this` গ্রহণ করে) |
-| **`arguments` অবজেক্ট** | নিজস্ব `arguments` অবজেক্ট থাকে | নিজস্ব `arguments` নেই (Rest `...args` লাগে) |
-| **Constructor হিসেবে** | `new` দিয়ে অবজেক্ট বানানো যায় | `new` দিয়ে চালানো যায় না (TypeError দেয়) |
+### 8.1 The 4 Binding Rules
 
----
-
-### 3.2 `this` Keyword Binding Rules (৪টি সুনির্দিষ্ট নিয়ম)
-
-1. **Default Binding:** সাধারণ ফাংশনে `this` পয়েন্ট করে `window` (ব্রাউজারে) বা `global` (Node.js-এ)। Strict Mode-এ এটি `undefined` হয়।
-2. **Implicit Binding:** অবজেক্টের ডট দিয়ে মেথড কল করলে মেথডের বা পাশের অবজেক্টটিই হবে `this` (`user.getName()` এ `user` হলো `this`)।
-3. **Explicit Binding (`call`, `apply`, `bind`):**
-   - `fn.call(thisObj, arg1, arg2)`: সাথে সাথে ফাংশন রান করে, কমা দিয়ে আর্গুমেন্ট নেয়।
-   - `fn.apply(thisObj, [arg1, arg2])`: সাথে সাথে রান করে, আর্গুমেন্ট অ্যারে হিসেবে নেয়।
-   - `fn.bind(thisObj)`: সাথে সাথে রান করে না, নতুন মেমোরাইজড ফাংশন রিটার্ন করে।
-4. **`new` Binding:** `new` কিওয়ার্ড দিয়ে কন্সট্রাক্টর ফাংশন চালালে নতুন তৈরি হওয়া অবজেক্টটিই হয় `this`।
-
----
-
-### 3.3 Prototypes and Prototypal Inheritance
-
-জাভাস্ক্রিপ্টে ক্লাস বলতে বাস্তবে কিছু নেই, ES6 Class সিনট্যাক্স মূলত **Prototypes**-এর ওপর একটি সিনট্যাক্টিক সুগার।
+1. **Default Binding:** Function invoked standalone (`fn()`). `this` points to `window` (browser) or `global` (Node). In `'use strict'`, `this` is `undefined`.
+2. **Implicit Binding:** Method invoked on an object (`obj.method()`). `this` points to `obj`.
+3. **Explicit Binding:** Using `.call()`, `.apply()`, or `.bind()`. `this` is explicitly specified.
+4. **`new` Binding:** Constructor called with `new Fn()`. `this` points to the brand new object instance.
 
 ```javascript
-function Person(name) {
-  this.name = name;
-}
-
-// প্রোটোটাইপে মেথড যোগ করা (সব ইনস্ট্যান্স শেয়ার করবে, মেমোরি বাঁচবে)
-Person.prototype.greet = function() {
-  return `Hello, I am ${this.name}`;
+const obj = {
+  name: "Alice",
+  greet() {
+    console.log(this.name);
+  }
 };
 
-const user1 = new Person("Tushar");
-console.log(user1.greet()); // "Hello, I am Tushar"
+obj.greet(); // Implicit -> "Alice"
+
+const detached = obj.greet;
+detached();  // Default -> undefined (Strict mode) or window.name
 ```
 
-**Prototype Chain:** যখন কোনো প্রপার্টি `user1`-এ না পাওয়া যায়, জাভাস্ক্রিপ্ট `user1.__proto__` ➔ `Person.prototype` ➔ `Object.prototype` ➔ `null` পর্যন্ত খোঁজে।
-
----
-
-# Module 4: Asynchronous JavaScript & Event Loop (Deep Dive)
-
-### 4.1 Event Loop Architecture (পর্দার পেছনের সিস্টেম)
-
-জাভাস্ক্রিপ্ট সিঙ্গেল থ্রেডেড হওয়া সত্ত্বেও আসিনক্রোনাস কাজ কীভাবে করে?
-
-```
-┌────────────────────────────────────────────────────────┐
-│ Call Stack                                             │
-└───────────────────────────┬────────────────────────────┘
-                            │ (Asynchronous operations sent)
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│ Web APIs (Node APIs) -> setTimeout, fetch, DOM events  │
-└───────────────────────────┬────────────────────────────┘
-                            │ (When task completes)
-                            ▼
- ┌──────────────────────────────────────────────────────┐
- │ MicroTask Queue (High Priority)                      │
- │ -> Promise.then/catch, process.nextTick, MutationObs │
- └──────────────────────────┬───────────────────────────┘
-                            │
- ┌──────────────────────────▼───────────────────────────┐
- │ MacroTask / Task Queue (Low Priority)                │
- │ -> setTimeout, setInterval, setImmediate, I/O        │
- └──────────────────────────┬───────────────────────────┘
-                            │
-                            ▼
-                  ┌───────────────────┐
-                  │   EVENT LOOP      │ ◄── Checks if Call Stack is EMPTY!
-                  └───────────────────┘
-```
-
-**ইভেন্ট লুপের চরম নিয়ম:**  
-১. Call Stack সম্পূর্ণ খালি হতে হবে।  
-২. **MicroTask Queue**-এর সমস্ত কাজ আগে শেষ করা হবে।  
-৩. এরপর **MacroTask Queue** থেকে ১টি মাত্র কাজ কল স্ট্যাকে নেওয়া হবে।
-
----
-
-### 4.2 Tricky Event Loop Interview Code
+### 8.2 Arrow Functions & Lexical `this`
+Arrow functions **do not have their own `this`**. They capture the `this` value lexically from their enclosing parent context at the time of creation.
 
 ```javascript
-console.log('1');
-
-setTimeout(() => console.log('2'), 0); // MacroTask
-
-Promise.resolve().then(() => console.log('3')); // MicroTask
-
-console.log('4');
-
-// আউটপুট ক্রমানুসারে:
-// 1
-// 4
-// 3 (MicroTask আগে আসবে)
-// 2 (MacroTask পরে আসবে)
+const timer = {
+  name: "Task Timer",
+  start() {
+    setTimeout(() => {
+      console.log(this.name); // Inherits `this` from start() -> "Task Timer"
+    }, 100);
+  }
+};
+timer.start();
 ```
 
 ---
 
-### 4.3 Promise Combinators (`all`, `allSettled`, `race`, `any`)
+## 9. `call`, `apply`, and `bind` (With Polyfills)
 
-| মেথড | বর্ণনা | রেজাল্ট |
+### 9.1 Differences
+
+```javascript
+function introduce(greeting, punctuation) {
+  return `${greeting}, I am ${this.name}${punctuation}`;
+}
+
+const user = { name: "Tushar" };
+
+// call: Invokes immediately, takes comma-separated arguments
+introduce.call(user, "Hello", "!");   // "Hello, I am Tushar!"
+
+// apply: Invokes immediately, takes arguments array
+introduce.apply(user, ["Hi", "."]);   // "Hi, I am Tushar."
+
+// bind: Does NOT invoke immediately; returns new bound function
+const boundFn = introduce.bind(user, "Welcome");
+boundFn("!!!");                       // "Welcome, I am Tushar!!!"
+```
+
+### 9.2 Custom Polyfill for `Function.prototype.bind`
+
+```javascript
+Function.prototype.myBind = function(context, ...args1) {
+  const targetFn = this;
+  if (typeof targetFn !== 'function') {
+    throw new TypeError("Must be called on a function");
+  }
+
+  return function(...args2) {
+    // Unique property to attach method temporary reference
+    const fnSymbol = Symbol('fn');
+    context = context || globalThis;
+    context[fnSymbol] = targetFn;
+    
+    const result = context[fnSymbol](...args1, ...args2);
+    delete context[fnSymbol];
+    return result;
+  };
+};
+```
+
+---
+
+## 10. Asynchronous JavaScript Architecture
+
+JavaScript is a **single-threaded**, **non-blocking**, **asynchronous** language.
+
+- **Single-Threaded:** Has only one Call Stack executing code line-by-line.
+- **Non-Blocking I/O:** Offloads time-consuming tasks (timers, network requests, disk reads) to browser Web APIs or Node.js `libuv` C++ thread pool.
+
+```
+┌────────────────────────────────────────────────────────┐
+│ V8 Engine Call Stack (Single Thread)                   │
+└───────────────────────────┬────────────────────────────┘
+                            │ (Offloads Async Tasks)
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│ Web APIs (Browser) / libuv (Node) -> Fetch, Timers, FS │
+└───────────────────────────┬────────────────────────────┘
+                            │ (Task Completed Event)
+                            ▼
+               ┌──────────────────────────┐
+               │ Microtask Queue (Promises)│
+               └────────────┬─────────────┘
+                            │
+               ┌────────────▼─────────────┐
+               │ Macrotask Queue (Timers) │
+               └────────────┬─────────────┘
+                            │
+                            ▼
+                   Event Loop Monitor
+```
+
+---
+
+## 11. Callbacks & Callback Hell
+
+### 11.1 Callback Concept
+A callback is a function passed as an argument to another function to execute after an async operation finishes.
+
+### 11.2 Callback Hell (Pyramid of Doom)
+Deeply nested callbacks create code that is hard to read, maintain, and handle errors.
+
+```javascript
+// Callback Hell Pattern
+getUser(1, (user) => {
+  getOrders(user.id, (orders) => {
+    getOrderDetails(orders[0].id, (details) => {
+      console.log(details);
+    }, handleError);
+  }, handleError);
+}, handleError);
+```
+
+---
+
+## 12. Promises & Async / Await
+
+### 12.1 Promise States
+1. **Pending:** Initial state, neither fulfilled nor rejected.
+2. **Fulfilled:** Operation completed successfully (`resolve(data)`).
+3. **Rejected:** Operation failed (`reject(error)`).
+
+### 12.2 Promise Combinators (`all`, `allSettled`, `race`, `any`)
+
+```javascript
+const p1 = Promise.resolve("One");
+const p2 = Promise.resolve("Two");
+const p3 = Promise.reject("Error");
+
+// Promise.all: Resolves when ALL pass; rejects immediately if ANY fails
+Promise.all([p1, p2]).then(console.log); // ["One", "Two"]
+
+// Promise.allSettled: Waits for all to settle; returns status objects array
+Promise.allSettled([p1, p3]).then(console.log);
+// [{status: "fulfilled", value: "One"}, {status: "rejected", reason: "Error"}]
+
+// Promise.race: Settles with outcome of FIRST settled promise (fulfilled or rejected)
+Promise.race([p1, p2]).then(console.log); // "One"
+
+// Promise.any: Settles with FIRST fulfilled promise; ignores rejections
+Promise.any([p3, p2]).then(console.log); // "Two"
+```
+
+### 12.3 Async / Await
+Syntactic sugar over Promises built on Generators.
+
+```javascript
+async function fetchUserData(userId) {
+  try {
+    const res = await fetch(`https://api.example.com/users/${userId}`);
+    if (!res.ok) throw new Error("User fetch failed");
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Error boundary caught:", err.message);
+  }
+}
+```
+
+---
+
+## 13. The Event Loop Mechanics
+
+The **Event Loop** is a continuous loop that monitors the Call Stack and task queues:
+
+1. Checks if the **Call Stack** is empty.
+2. If empty, completely drains all pending tasks in the **Microtask Queue**.
+3. Takes **ONE** task from the **Macrotask Queue** and pushes it onto the Call Stack.
+4. Renders UI frame updates (if browser needs repaint).
+5. Repeats the loop.
+
+---
+
+## 14. Microtask Queue vs Macrotask Queue
+
+| Queue | Tasks Included | Priority |
 | :--- | :--- | :--- |
-| `Promise.all([p1, p2])` | সব প্রমিস সফল হতে হবে | ১টি রিজেক্ট হলেই পুরো প্রমিস ক্যাচ (Catch)-এ চলে যায় |
-| `Promise.allSettled([p1, p2])` | সব প্রমিস শেষ হওয়া পর্যন্ত অপেক্ষা করে | রিজেক্ট হোক বা রিজলভ, সবার স্ট্যাটাস অবজেক্ট অ্যারে দেয় |
-| `Promise.race([p1, p2])` | যেটি সবার আগে রেস জিতবে (Rejects or Resolves) | প্রথম দ্রুততম প্রমিাসের ফলাফল দেয় |
-| `Promise.any([p1, p2])` | প্রথম যেটি **সফল** (Fulfilled) হবে | সব রিজেক্ট হলেই কেবল AggregateError দেয় |
+| **Microtask Queue** | `Promise.then / catch / finally`, `queueMicrotask()`, `MutationObserver`, `process.nextTick` | **High Priority** (Drained completely before next tick) |
+| **Macrotask Queue** | `setTimeout`, `setInterval`, `setImmediate`, `I/O operations`, `UI Rendering` | **Low Priority** (Executes 1 task per loop iteration) |
 
----
-
-# Module 5: ES6+ Modern JavaScript Mastery
-
-### 5.1 Destructuring, Rest & Spread
-- **Destructuring:** `{ name, age } = user`
-- **Spread (`...`):** অ্যারে/অবজেক্টের ডাটা ছড়িয়ে দিয়ে কপি/মার্জ করা (Shallow Copy)।
-- **Rest (`...args`):** একাধিক আর্গুমেন্টকে একটি অ্যারেতে গুটিয়ে নেওয়া।
-
----
-
-### 5.2 Map, Set, WeakMap, WeakSet
-
-- **Map:** যেকোনো ডাটা টাইপ (এমনকি Object/Function)-কে Key হিসেবে ব্যবহার করা যায়।
-- **Set:** শুধুমাত্র ইউনিক মান (Unique values) ধরে রাখে।
-- **WeakMap / WeakSet:** শুধুমাত্র Object-কে Key হিসেবে রাখে। এগুলো **Garbage Collection-friendly**, অর্থাৎ মূল অবজেক্ট ডিলেট হয়ে গেলে WeakMap থেকে স্বয়ংক্রিয়ভাবে মেমোরি ফ্রি হয়ে যায় (Memory Leak আটকায়)।
-
----
-
-# Module 6: DOM, Event Bubbling, Delegation, Debounce & Throttle
-
-### 6.1 Event Bubbling বনাম Event Capturing
-- **Event Capturing (Trickling):** ইভেন্ট ওপরের Window থেকে নিচের টার্গেট নোডের দিকে নামতে থাকে (Top to Bottom)।
-- **Event Bubbling:** ইভেন্ট টার্গেট নোড থেকে ওপরের Parent/Window-এর দিকে উঠতে থাকে (Bottom to Top)। ডিফল্টভাবে `addEventListener` বাবলিং ব্যবহার করে। `e.stopPropagation()` দিলে বাবলিং বন্ধ হয়।
-
----
-
-### 6.2 Event Delegation (পারফরম্যান্স ট্রিক)
-অসংখ্য চাইল্ড এলিমেন্টে আলাদা আলাদা ইভেন্ট লিসেনার না লাগিয়ে কমন প্যারেন্ট এলিমেন্টে ১টি মাত্র ইভেন্ট লিসেনার লাগানোকে **Event Delegation** বলে।
+### Interview Priority Execution Quiz
 
 ```javascript
-// ১০০০ টি <li> তে লিসেনার না বানিয়ে <ul> এ ১টি লিসেনার
-document.getElementById('parent-ul').addEventListener('click', function(e) {
-  if (e.target && e.target.nodeName === 'LI') {
-    console.log('Clicked Item:', e.target.innerText);
+console.log('1: Sync Start');
+
+setTimeout(() => console.log('2: Macrotask setTimeout'), 0);
+
+Promise.resolve().then(() => console.log('3: Microtask Promise 1'))
+               .then(() => console.log('4: Microtask Promise 2'));
+
+queueMicrotask(() => console.log('5: Microtask queueMicrotask'));
+
+console.log('6: Sync End');
+
+// Execution Order Output:
+// 1: Sync Start
+// 6: Sync End
+// 3: Microtask Promise 1
+// 5: Microtask queueMicrotask
+// 4: Microtask Promise 2
+// 2: Macrotask setTimeout
+```
+
+---
+
+## 15. DOM, BOM & Event Delegation
+
+### 15.1 DOM vs BOM
+- **DOM (Document Object Model):** Represents the HTML document tree (`document.getElementById`, `document.querySelector`).
+- **BOM (Browser Object Model):** Objects exposed by the browser outside document content (`window`, `navigator`, `location`, `history`, `screen`).
+
+### 15.2 Event Propagation: Capturing vs Bubbling
+1. **Capturing Phase (Trickling):** Event travels down from `window` -> `document` -> `body` -> parent elements down to target element.
+2. **Target Phase:** Event reaches target element.
+3. **Bubbling Phase:** Event bubbles up from target element up through parents back to `window`.
+
+```javascript
+// Default addEventListener uses Bubbling (false)
+element.addEventListener('click', handler, false); 
+
+// Pass true to listen during Capturing phase
+element.addEventListener('click', handler, true); 
+```
+
+### 15.3 Event Delegation Pattern
+Attaching a single event listener to a parent container to handle events triggered on current or future child elements using event bubbling.
+
+```javascript
+// Single event listener on container instead of 1,000 child button listeners
+document.getElementById('shopping-cart').addEventListener('click', (e) => {
+  if (e.target && e.target.matches('button.delete-item')) {
+    const itemId = e.target.dataset.id;
+    console.log("Deleted item:", itemId);
   }
 });
 ```
 
 ---
 
-### 6.3 Debounce বনাম Throttle
+## 16. Advanced Concepts
 
-- **Debouncing:** ব্যবহারকারীর অ্যাকশন থামার পর নির্দিষ্ট সময় অপেক্ষা করে একবার ফাংশন রান করে (যেমন: Search Bar Typeahead)।
-- **Throttling:** দ্রুত অ্যাকশন চললেও নির্দিষ্ট সময় পর পর নিয়মিত বিরতিতে ফাংশন রান করে (যেমন: Window Resize, Scroll Event)।
+### 16.1 Debouncing vs Throttling
 
----
-
-# Module 7: Memory Management & V8 Engine Optimization
-
-### 7.1 Garbage Collection (Mark-and-Sweep Algorithm)
-V8 ইঞ্জিন মেমোরি থেকে অপ্রয়োজনীয় অবজেক্ট ডিলিট করার জন্য **Mark-and-Sweep Algorithm** ব্যবহার করে।
-১. Root (Global Window) থেকে অ্যাক্সেসযোগ্য সব অবজেক্টকে "Reachable/Marked" বলে চিহ্নিত করা হয়।  
-২. যেসব অবজেক্ট রুটের সাথে কানেক্টেড নয়, সেগুলোকে মেমোরি থেকে মুছে ফেলা হয় (Sweep)।
-
----
-
-### 7.2 Memory Leaks-এর প্রধান কারণসমূহ
-1. **Accidental Global Variables:** `function test() { age = 20; }` (`var/let` ছাড়া)
-2. **Forgotten Timers / Intervals:** `setInterval` না ক্লিয়ার করা।
-3. **Detached DOM Nodes:** জাভাস্ক্রিপ্ট ভ্যারিয়েবলে DOM এলিমেন্ট সেভ রেখে আসল DOM থেকে ডিলেট করে দেওয়া।
-4. **Stale Closures:** আনইউজড ভ্যারিয়েবল ক্লোজারে আটকে থাকা।
-
----
-
-# Module 8: Polyfills & Tricky Coding Scenarios
-
-### Scenario 1: Custom Polyfill for `Array.prototype.map`
+- **Debouncing:** Delays function execution until user activity stops for specified `delay` ms (e.g. Typeahead Search inputs).
+- **Throttling:** Limits function execution to once every `limit` ms interval (e.g. Scroll, Window Resize listeners).
 
 ```javascript
-Array.prototype.myMap = function(callback) {
-  if (typeof callback !== 'function') {
-    throw new TypeError(callback + ' is not a function');
-  }
-
-  const result = [];
-  for (let i = 0; i < this.length; i++) {
-    // `this` নির্দেশ করে মূল অ্যারেকে, in চেক করে ডিলিট করা ইনডেক্স স্কিপ করে
-    if (i in this) {
-      result.push(callback(this[i], i, this));
-    }
-  }
-  return result;
-};
-
-// পরীক্ষা:
-const nums = [1, 2, 3];
-console.log(nums.myMap(x => x * 2)); // [2, 4, 6]
-```
-
----
-
-### Scenario 2: Custom Polyfill for `Function.prototype.bind`
-
-```javascript
-Function.prototype.myBind = function(context, ...args1) {
-  const originalFn = this;
-
-  return function(...args2) {
-    // call বা apply ব্যবহার করে মেথড রান করা
-    return originalFn.apply(context, [...args1, ...args2]);
-  };
-};
-
-// পরীক্ষা:
-const user = { name: "Tushar" };
-function greet(greeting, punctuation) {
-  return `${greeting}, ${this.name}${punctuation}`;
-}
-
-const boundFn = greet.myBind(user, "Hello");
-console.log(boundFn("!")); // "Hello, Tushar!"
-```
-
----
-
-### Scenario 3: Custom Debounce Implementation from Scratch
-
-```javascript
+// Custom Debounce Implementation
 function debounce(fn, delay) {
   let timerId;
-
-  return function(...args) {
+  return function (...args) {
     const context = this;
-    clearTimeout(timerId); // আগের টাইমার বাতিল করা
+    clearTimeout(timerId);
+    timerId = setTimeout(() => fn.apply(context, args), delay);
+  };
+}
 
-    timerId = setTimeout(() => {
+// Custom Throttle Implementation
+function throttle(fn, limit) {
+  let inThrottle = false;
+  return function (...args) {
+    const context = this;
+    if (!inThrottle) {
       fn.apply(context, args);
-    }, delay);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
   };
 }
 ```
 
 ---
 
-# Module 9: Complete Level-by-Level Question Vault
+### 16.2 Memoization
+Caching function outputs based on input arguments to avoid repeating expensive calculations.
 
-### 🟢 Junior Level Questions & Answers
+```javascript
+function memoize(fn) {
+  const cache = new Map();
+  return function (...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+}
 
-**Q1: `==` এবং `===`-এর পার্থক্য কী?**  
-**উত্তর:** `==` (Abstract Equality) টাইপ কনভার্সন (Type Coercion) করে মান তুলনা করে। `===` (Strict Equality) টাইপ ও মান উভয়ই হুবহু তুলনা করে।
-
-**Q2: `null` এবং `undefined`-এর পার্থক্য কী?**  
-**উত্তর:** `undefined` মানে কোনো ভ্যারিয়েবল ডিক্লেয়ার করা হয়েছে কিন্তু মান অ্যাসাইন করা হয়নি। `null` মানে ডেভেলপারের স্পষ্ট ইচ্ছায় কোনো ভ্যারিয়েবলকে খালি (Empty object reference) রাখা হয়েছে।
-
----
-
-### 🟡 Mid Level Questions & Answers
-
-**Q1: Call, Apply এবং Bind-এর প্রধান পার্থক্য কী?**  
-**উত্তর:** `call` এবং `apply` সাথে সাথে ফাংশন রান করে (call কমা দিয়ে আর্গুমেন্ট নেয়, apply অ্যারে হিসেবে নেয়)। `bind` সাথে সাথে রান না করে কাস্টম `this` বাইন্ডিং যুক্ত একটি নতুন ফাংশন রিটার্ন করে।
-
-**Q2: Deep Copy বনাম Shallow Copy কীভাবে করবেন?**  
-**উত্তর:** Shallow Copy (`Object.assign()`, `{...obj}`) শুধুমাত্র ১ম লেভেলের ফিল্ড কপি করে (নেস্টেড অবজেক্টের মেমোরি রেফারেন্স থেকে যায়)। Deep Copy করতে আধুনিক `structuredClone(obj)` অথবা `JSON.parse(JSON.stringify(obj))` ব্যবহার করা হয়।
-
----
-
-### 🔴 Senior Level Questions & Answers
-
-**Q1: MicroTask Queue এবং MacroTask Queue-এর প্রাধান্য কীভাবে নির্ধারিত হয়?**  
-**উত্তর:** ইভেন্ট লুপ প্রতিবার কল স্ট্যাক খালি হলে প্রথমে MicroTask Queue-এর সব কাজ সম্পন্ন করে। MicroTask সম্পূর্ণ খালি হওয়ার পরই কেবল MacroTask Queue থেকে ১টি কাজ সম্পাদন করা হয়।
-
-**Q2: V8 ইঞ্জিনের "Hidden Classes" / "Shapes" কী এবং কীভাবে এটি অপটিমাইজ করা যায়?**  
-**উত্তর:** V8 ইঞ্জিন সমজাতীয় অবজেক্টগুলোর দ্রুত মেমোরি অফসেট রিডের জন্য অভ্যন্তরীণভাবে Hidden Class তৈরি করে। যদি অবজেক্টে ফিল্ড যোগ করার ক্রম (Property order) এলোমেলো করা হয় (যেমন `{a:1, b:2}` vs `{b:2, a:1}`), তবে V8 ইনলাইন ক্যাশিং অপটিমাইজেশন হারায় (de-optimization ঘটে)।
+// Example usage with Fibonacci
+const memoizedFib = memoize(function fib(n) {
+  if (n <= 1) return n;
+  return memoizedFib(n - 1) + memoizedFib(n - 2);
+});
+```
 
 ---
 
-> **🎉 অভিনন্দন!** আপনি JavaScript-এর একটি সম্পূর্ণ **Senior Level Master Handbook** অর্জন করেছেন। নিয়মিত প্র্যাকটিস ও রিভিশন করুন!
+### 16.3 Function Currying & Infinite Currying
+
+Currying transforms a function taking multiple arguments `f(a, b, c)` into a sequence of unary functions `f(a)(b)(c)`.
+
+```javascript
+// Basic Currying
+const add = a => b => c => a + b + c;
+console.log(add(1)(2)(3)); // 6
+
+// Infinite Currying Implementation: add(1)(2)(3)...()
+function infiniteAdd(a) {
+  return function (b) {
+    if (b !== undefined) {
+      return infiniteAdd(a + b);
+    }
+    return a;
+  };
+}
+console.log(infiniteAdd(1)(2)(3)(4)()); // 10
+```
+
+---
+
+### 16.4 Garbage Collection & Memory Leaks
+
+#### V8 Garbage Collection (Mark-and-Sweep)
+V8 manages memory allocations using:
+1. **Young Generation (Scavenger):** Short-lived objects cleared rapidly.
+2. **Old Generation (Mark-and-Sweep-Compact):** Long-lived objects. Mark reachable objects from Root (`window`), sweep unreferenced memory.
+
+#### Top 4 Causes of Memory Leaks
+
+1. **Accidental Global Variables:**
+   ```javascript
+   function leak() {
+     leakedVar = "I am attached to window!"; // Forgot let/const
+   }
+   ```
+2. **Forgotten Timers / Intervals:**
+   ```javascript
+   const timer = setInterval(() => {
+     // If timer is never clearInterval(), closure retains referenced objects in memory!
+   }, 1000);
+   ```
+3. **Detached DOM Element References:**
+   ```javascript
+   let btnRef = document.getElementById('button');
+   document.body.removeChild(btnRef); // Removed from DOM tree
+   // But btnRef variable still holds reference in RAM memory!
+   btnRef = null; // Fix: clear reference
+   ```
+4. **Stale Closures & Uncleaned Event Listeners:**
+   Always run `removeEventListener` when UI components unmount.
+
+---
+
+> 🎉 **Master Guide Complete!** Use this handbook for revision before JavaScript Technical Interviews.
