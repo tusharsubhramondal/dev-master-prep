@@ -20,6 +20,7 @@ LEARN ➔ UNDERSTAND ➔ PRACTICE ➔ BUILD ➔ INTERVIEW ➔ ADVANCE
 - [🛠️ Tech Stack & Dependencies](#️-tech-stack--dependencies)
 - [📁 Project Folder Structure](#-project-folder-structure)
 - [🚀 Quick Start & Installation](#-quick-start--installation)
+- [🌐 Hostinger Deployment via GitHub Actions](#-hostinger-deployment-via-github-actions)
 - [📊 Seniority & Experience Bands](#-seniority--experience-bands)
 - [📄 License & Credits](#-license--credits)
 
@@ -216,6 +217,31 @@ npm run lint
 
 ---
 
+## 🌐 Hostinger Deployment via GitHub Actions
+
+This repository includes an automated deployment workflow configured in [`.github/workflows/deploy.yml`](file:///c:/Users/tusha/Desktop/dev-master-prep/.github/workflows/deploy.yml). Whenever code is pushed to the `main` or `master` branch, GitHub Actions will automatically install dependencies, build the production bundle (`dist/`), and upload it to Hostinger via FTP/SFTP.
+
+### 1. Configure Hostinger FTP Account
+1. Log in to your **Hostinger hPanel**.
+2. Go to **Files** ➔ **FTP Accounts**.
+3. Copy your **FTP Hostname / Server IP**, **FTP Username**, and **FTP Password** (or create a new FTP account pointing to `public_html`).
+
+### 2. Add Secrets to GitHub Repository
+In your GitHub repository, navigate to **Settings** ➔ **Secrets and variables** ➔ **Actions**, and add the following repository secrets:
+
+| Secret Name | Value | Example |
+| :--- | :--- | :--- |
+| `FTP_SERVER` | FTP Host / Server IP | `ftp.yourdomain.com` or `185.185.xxx.xxx` |
+| `FTP_USERNAME` | Hostinger FTP Username | `u123456789.user` |
+| `FTP_PASSWORD` | Hostinger FTP Password | `YourSecurePassword123` |
+| `FTP_SERVER_DIR` | Hostinger Target Directory *(Optional)* | `./public_html/` |
+| `FTP_PROTOCOL` | Connection Protocol *(Optional)* | `ftps` or `ftp` (default: `ftps`) |
+
+### 3. Automatic SPA Client Routing (`.htaccess`)
+To prevent `404 Not Found` errors when refreshing routes on Hostinger's web server (Apache/LiteSpeed), an [`.htaccess`](file:///c:/Users/tusha/Desktop/dev-master-prep/public/.htaccess) file is included in `public/.htaccess`. It is automatically included in the production build artifact (`dist/.htaccess`) during deployment.
+
+---
+
 ## 📊 Seniority & Experience Bands
 
 | Band | Experience Horizon | Focus Area |
@@ -232,4 +258,5 @@ npm run lint
 ## 📄 License & Credits
 
 Developed with ❤️ by **AppZone**. All rights reserved.
+
 
