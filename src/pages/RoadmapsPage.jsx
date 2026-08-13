@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { technologiesData } from '../data/technologiesData';
 import { roadmapsData } from '../data/roadmapsData';
+import SEO from '../components/SEO';
 
 export default function RoadmapsPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function RoadmapsPage() {
   }, [techId]);
 
   const techObj = technologiesData.find((t) => t.id === selectedTech);
+  const techTitle = techObj ? techObj.name : 'Developer';
 
   // Helper to generate a default 3-level roadmap if a specific tech roadmap isn't custom defined
   const getRoadmapForTech = (id) => {
@@ -94,6 +96,10 @@ export default function RoadmapsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-16 w-full max-w-full overflow-hidden">
+      <SEO 
+        title={`${techTitle} Developer Roadmap | DEV MASTER`}
+        description={`Interactive step-by-step career progression roadmap for ${techTitle} from Junior to Principal Architect.`}
+      />
 
       {/* Header Panel */}
       <div className="rounded-2xl bg-[#121722] border border-slate-800/80 p-5 sm:p-7 space-y-4 shadow-xl">

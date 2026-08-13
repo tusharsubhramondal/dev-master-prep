@@ -1,0 +1,7 @@
+# robots.txt for DEV MASTER
+User-agent: *
+Allow: /
+
+# Host & Sitemap
+Host: https://learn.appzone.in
+Sitemap: https://learn.appzone.in/sitemap.xml

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 
 export default function IntegrationPage() {
   const [activeTech, setActiveTech] = useState('kafka'); // 'kafka' | 'rabbitmq' | 'bullmq'
@@ -571,6 +572,10 @@ npx prisma db pull                  # Introspect existing database schema`
 
   return (
     <div className="space-y-6 animate-fade-in pb-16">
+      <SEO 
+        title={`${current.name} Integration & Architecture Lab | DEV MASTER`}
+        description={`Production integration guide for ${current.name} (${current.badge}). Includes Node.js and Laravel code setups, Docker Compose configs, Producers, and Consumers.`}
+      />
       
       {/* Header Banner */}
       <div className="relative rounded-2xl bg-[#121722] border border-slate-800/80 p-6 sm:p-8 overflow-hidden shadow-xl">

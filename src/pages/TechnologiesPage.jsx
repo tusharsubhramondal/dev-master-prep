@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { technologiesData } from '../data/technologiesData';
 import TechGrid from '../components/TechGrid';
+import SEO from '../components/SEO';
 
 export default function TechnologiesPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -20,6 +21,10 @@ export default function TechnologiesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      <SEO 
+        title="20+ Tech Stacks Catalog | DEV MASTER"
+        description="Browse 20+ core software engineering tech stacks from Junior to Senior Architect level. Filter by Frontend, Backend, Cloud, Database, and Architecture."
+      />
 
       {/* Hero Header */}
       <div className="relative rounded-2xl bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900 border border-indigo-500/20 p-8 overflow-hidden">

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { qnaData } from '../data/qnaData';
 import { technologiesData } from '../data/technologiesData';
+import SEO from '../components/SEO';
 
 const PAGE_SIZE = 25;
 
@@ -81,8 +82,15 @@ export default function QnaPage() {
     setDisplayLimit(prev => prev + PAGE_SIZE);
   };
 
+  const activeTechObj = technologiesData.find(t => t.id === selectedTechId);
+  const activeTechName = activeTechObj ? activeTechObj.name : 'All Technologies';
+
   return (
     <div className="space-y-6 animate-fade-in pb-16 w-full max-w-full overflow-hidden">
+      <SEO 
+        title={`${activeTechName} Technical Interview Questions & Answers | DEV MASTER`}
+        description={`Curated Senior & Architect level interview questions, trap alerts, and detailed answers for ${activeTechName}.`}
+      />
       
       {/* Hero Banner Header */}
       <div className="relative rounded-2xl bg-[#121722] border border-slate-800/80 p-5 sm:p-7 overflow-hidden shadow-xl">

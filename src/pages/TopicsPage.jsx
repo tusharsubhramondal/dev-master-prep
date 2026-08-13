@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { topicsData } from '../data/topicsData';
 import { technologiesData } from '../data/technologiesData';
+import SEO from '../components/SEO';
 
 export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
   const params = useParams();
@@ -77,6 +78,10 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
+      <SEO 
+        title={`${topic.title} (${tech.name}) | 17-Section Deep Dive — DEV MASTER`}
+        description={topic.simpleExplanation ? topic.simpleExplanation.substring(0, 160) : `Deep technical breakdown of ${topic.title} in ${tech.name}. Includes visual diagrams, anti-patterns, interview questions, and practice runner.`}
+      />
 
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">

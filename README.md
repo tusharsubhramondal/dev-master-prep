@@ -1,5 +1,6 @@
 # 🚀 DEV MASTER — Developer Learning & Interview Preparation Platform
-> **Developed by AppZone**
+> **Developed by AppZone**  
+> 🔗 **Live Web App**: [https://learn.appzone.in/](https://learn.appzone.in/)
 
 **DEV MASTER** is a modern, professional, data-driven **Developer Learning & Technical Interview Preparation Platform**. Designed for developers across all experience levels—from Junior to Principal Architect—it provides structured learning paths, deep technical breakdowns, interactive practice runners, message queue integration labs, and an extensive technical Q&A database.
 
