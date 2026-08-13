@@ -11,20 +11,16 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route
-          element={
-            <Main />
-          }
-        >
+        <Route element={<Main />}>
           <Route path="/" element={<Navigate to="/technologies" replace />} />
           <Route path="/technologies" element={<TechnologiesPage />} />
           <Route path="/roadmaps" element={<RoadmapsPage />} />
+          <Route path="/roadmaps/:techId" element={<RoadmapsPage />} />
           <Route path="/topics" element={<TopicsPage />} />
           <Route path="/topics/:topicId" element={<TopicsPage />} />
           <Route path="*" element={<Navigate to="/technologies" replace />} />
         </Route>
       </Routes>
-
     </>
   );
 }

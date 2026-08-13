@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { topicsData } from '../data/topicsData';
 import { technologiesData } from '../data/technologiesData';
 
 export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
-  const topic = topicsData[topicId] || topicsData["javascript-closure"];
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const activeTopicId = topicId || params.topicId || "javascript-closure";
+  const topic = topicsData[activeTopicId] || topicsData["javascript-closure"];
   const tech = technologiesData.find((t) => t.id === topic.techId) || technologiesData[0];
+
+  const handleBackToTech = () => {
+    if (onBackToTech) {
+      onBackToTech();
+    } else {
+      navigate(`/roadmaps?tech=${tech.id}`);
+    }
+  };
 
   const [copiedCode, setCopiedCode] = useState(false);
   const [activeTabSection, setActiveTabSection] = useState("all");
@@ -21,7 +34,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
       setTestResult(null);
       setShowSolution(false);
     }
-  }, [topicId]);
+  }, [activeTopicId]);
 
   const handleCopyCode = (text) => {
     navigator.clipboard.writeText(text);
@@ -64,7 +77,7 @@ export default function TopicPage({ topicId, onSelectTopic, onBackToTech }) {
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-xs text-slate-400">
-          <button onClick={onBackToTech} className="hover:text-white flex items-center gap-1 font-semibold">
+          <button onClick={handleBackToTech} className="hover:text-white flex items-center gap-1 font-semibold">
             <i className={`${tech.icon}`} style={{ color: tech.color }}></i> {tech.name}
           </button>
           <i className="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>

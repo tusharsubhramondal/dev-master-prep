@@ -1,9 +1,19 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export default function TechGrid({ filteredTechs = [] }) {
+    const navigate = useNavigate();
+
+    const goToRoadmap = (techId) => {
+        navigate(`/roadmaps/${techId}`);
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTechs.map((tech) => (
                 <div
                     key={tech.id}
+                    onClick={() => goToRoadmap(tech.id)}
                     className="glass-panel p-6 flex flex-col justify-between group hover:border-indigo-500/50 hover:shadow-glow transition-all cursor-pointer"
                 >
                     <div className="space-y-4">
@@ -78,16 +88,16 @@ export default function TechGrid({ filteredTechs = [] }) {
                     </div>
 
                     {/* Actions */}
-                    <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center gap-2">
+                    <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                         <button
-
+                            onClick={() => { goToRoadmap(tech.id) }}
                             className="flex-1 py-2.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md shadow-indigo-600/20"
                         >
                             <span>Start Learning</span>
                             <i className="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
                         <button
-
+                            onClick={() => { goToRoadmap(tech.id) }}
                             title="View Technology Roadmap"
                             className="py-2.5 px-3 bg-[#172033] hover:bg-slate-700 text-slate-300 font-semibold rounded-lg text-xs flex items-center justify-center transition-colors border border-slate-700"
                         >

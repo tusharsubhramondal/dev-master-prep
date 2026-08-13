@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { technologiesData, techCategories } from '../data/technologiesData';
+import { technologiesData } from '../data/technologiesData';
 import TechGrid from '../components/TechGrid';
 
 export default function TechnologiesPage() {

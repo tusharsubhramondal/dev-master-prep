@@ -1,7 +1,7 @@
 export const roadmapsData = {
   javascript: {
     techId: "javascript",
-    title: "Complete JavaScript Mastery Roadmap (33 Steps)",
+    title: "Complete JavaScript Mastery Roadmap",
     steps: [
       { step: 1, title: "JavaScript Basics", desc: "Introduction, V8 engine execution context, scripting vs compiled runtime.", topicId: "js-basics", level: "Beginner" },
       { step: 2, title: "Variables & Data Types", desc: "var vs let vs const, Primitives vs Objects.", topicId: "js-variables", level: "Beginner" },
