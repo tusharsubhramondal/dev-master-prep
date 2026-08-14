@@ -93,6 +93,110 @@ class AppServiceProvider extends ServiceProvider {
     quickRevision: "⚡ Entry point: public/index.php -> maintenance check -> autoload -> bootstrap/app.php -> $app->handleRequest() -> Service Providers (register -> boot) -> Global Middleware -> Route Match -> Controller -> View -> Terminate."
   }),
 
+    // 1b. SERVICE CONTAINER & SERVICE PROVIDERS
+  "laravel-service-container-providers": createTopicSchema({
+    id: "laravel-service-container-providers",
+    techId: "laravel",
+    title: "Service Container, Service Providers & Dependency Injection",
+    category: "Laravel Core & Architecture",
+    difficulty: "Advanced",
+    experienceBand: "8+ years",
+    readingTime: "20 min",
+    prerequisites: ["laravel-core-architecture"],
+    definition: "Deep dive into Laravel Service Container (IoC engine), Service Providers (app/Providers/), Contracts vs Interfaces, Closure bindings with secret keys/configs, and strict method signature enforcement.",
+    simpleExplanation: "The Service Container is a smart IoC toolbox. Service Providers populate the toolbox in register() and configure settings in boot(). Contracts are framework interfaces. When passing secret keys, use a Closure factory function in bind() or singleton() with config().",
+    whyDoesItExist: "Enforces SOLID principles, decoupling controllers from third-party services, enabling easy environment switching, and securing secret keys in config files.",
+    basicExample: `// 1. Passing Secret Keys / Configs via Closure Factory
+$this->app->singleton(StripePaymentGateway::class, function ($app) {
+    return new StripePaymentGateway(
+        apiKey: config('services.stripe.secret'),
+        environment: config('app.env')
+    );
+});
+
+// 2. Binding Interface to Implementation with Closure
+$this->app->bind(PaymentGatewayInterface::class, function ($app) {
+    return new StripePaymentGateway(
+        apiKey: env('STRIPE_SECRET')
+    );
+});`,
+    howItWorks: [
+      "1. Contracts vs Interfaces: Contracts are Laravel core interfaces (Illuminate\\Contracts\\*). Custom interfaces are user-defined (App\\Services\\*). Both define strict method contracts.",
+      "2. Passing Secret Keys: Use Closure factories in bind()/singleton() to pull secret keys from config('services.stripe.secret') or env().",
+      "3. Method Name Mismatches: If a concrete class changes a method name declared in an Interface, PHP throws a Fatal Compile Error: 'Class contains 1 abstract method and must implement remaining methods'.",
+      "4. Container Auto-Wiring: Reflection API inspects controller parameter types, resolves matching bindings, and injects instances automatically."
+    ],
+    visualDiagram: `<svg viewBox="0 0 800 200" class="w-full bg-slate-900 rounded-lg p-3"><rect x="10" y="70" width="130" height="60" rx="8" fill="#1e293b" stroke="#ff2d20" stroke-width="2"/><text x="75" y="95" fill="#f87171" font-size="11" text-anchor="middle">Contracts / Interfaces</text><text x="75" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Method Signatures</text><path d="M140 100 L180 100" stroke="#64748b" stroke-width="2"/><rect x="180" y="70" width="160" height="60" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/><text x="260" y="95" fill="#60a5fa" font-size="11" text-anchor="middle">Service Provider</text><text x="260" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Closure + Secret Keys</text><path d="M340 100 L380 100" stroke="#64748b" stroke-width="2"/><rect x="380" y="70" width="160" height="60" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/><text x="460" y="95" fill="#c084fc" font-size="11" text-anchor="middle">Service Container</text><text x="460" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Auto-Wiring Engine</text><path d="M540 100 L580 100" stroke="#64748b" stroke-width="2"/><rect x="580" y="70" width="180" height="60" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="670" y="95" fill="#34d399" font-size="11" text-anchor="middle">Controller Action</text><text x="670" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Injected Implementation</text></svg>`,
+    realWorldExample: `// Complete Production Example: Contracts, Secrets & Method Contract Enforcement
+namespace App\\Services\\Payment;
+
+// 1. Interface / Contract
+interface PaymentGatewayInterface {
+    public function charge(float $amount): array;
+}
+
+// 2. Concrete Implementation
+class StripePaymentGateway implements PaymentGatewayInterface {
+    public function __construct(private string $secretKey) {}
+
+    // MUST match method name 'charge' declared in interface!
+    // Changing this method name to 'processPayment' causes PHP Fatal Error!
+    public function charge(float $amount): array {
+        return ['status' => 'charged', 'amount' => $amount, 'key_used' => substr($this->secretKey, 0, 4) . '***'];
+    }
+}
+
+// 3. Service Provider Registration with Secret Keys
+class PaymentServiceProvider extends ServiceProvider {
+    public function register(): void {
+        $this->app->singleton(PaymentGatewayInterface::class, function ($app) {
+            return new StripePaymentGateway(
+                secretKey: config('services.stripe.secret') // Secret Key Injection
+            );
+        });
+    }
+}`,
+    commonUseCases: [
+      "Injecting secret API keys securely into services via config() in Closure bindings",
+      "Using Laravel Contracts (Illuminate\\Contracts\\*) for decoupled architecture",
+      "Enforcing strict method contracts across multi-developer engineering teams"
+    ],
+    commonMistakes: [
+      "Renaming a method in a concrete class without updating the Interface (causes PHP Fatal Compile Error)",
+      "Calling env() directly inside controllers instead of passing config() values through Service Provider bindings",
+      "Hardcoding secret API keys inside Service Provider files instead of using config/ or .env"
+    ],
+    bestPractices: [
+      "Always pass secret keys via config('services.service_name.key') inside Closure bindings",
+      "Use Laravel Contracts (e.g. Illuminate\\Contracts\\Cache\\Repository) when building reusable packages",
+      "Keep method names identical between Interfaces and Implementations to avoid compile errors"
+    ],
+    whenToUse: ["In all senior level Laravel system architectures"],
+    whenNotToUse: ["N/A"],
+    relatedConcepts: ["Laravel Contracts", "Interfaces", "Closure Bindings", "Secret Keys", "PHP Reflection"],
+    comparison: {
+      title: "Contracts vs Custom Interfaces vs Closures",
+      headers: ["Concept", "Definition", "Role in Container"],
+      rows: [
+        ["Laravel Contracts", "Framework interfaces (Illuminate\\Contracts\\*)", "Type-hint core Laravel features (Cache, Queue, Auth)"],
+        ["Custom Interfaces", "Application interfaces (App\\Services\\*)", "Type-hint custom domain services (Payment, VoIP)"],
+        ["Closure Bindings", "Factory functions inside bind()/singleton()", "Inject secret API keys & config values into class constructors"]
+      ]
+    },
+    interviewQuestions: [
+      { level: "Senior", question: "What is the difference between a Laravel Contract and a standard PHP Interface?", answer: "A Laravel Contract is simply an interface provided by the Laravel framework (under Illuminate\\Contracts\\*) to define core framework services. Custom interfaces are user-defined interfaces for application domain logic." },
+      { level: "Senior", question: "What happens if a concrete class changes a method name declared in its Interface?", answer: "PHP throws a Fatal Compile Error: 'Class X contains 1 abstract method and must implement remaining methods'. The method name in the concrete class MUST match the interface signature exactly." },
+      { level: "Senior", question: "How do you securely inject secret keys or config options into a Service Container binding?", answer: "Use a Closure factory as the second parameter in bind() or singleton(): $this->app->singleton(Service::class, fn () => new Service(apiKey: config('services.api.key')))." }
+    ],
+    practiceProblem: {
+      description: "Write a singleton binding passing secret key from config to StripeService.",
+      starterCode: `$this->app->singleton(StripeService::class, function ($app) {\n  // Pass secret key from config\n});`,
+      testAssertion: "app(StripeService::class) instanceof StripeService",
+      solution: `$this->app->singleton(StripeService::class, function ($app) {\n  return new StripeService(config('services.stripe.secret'));\n});`
+    },
+    quickRevision: "⚡ Contracts = Laravel Core Interfaces.\n⚡ Secret Keys = Pass via Closure factory with config().\n⚡ Method Name Change = PHP Fatal Error (Interface contract violation)."
+  }),
+
   // 2. LARAVEL MVC & APPLICATION ARCHITECTURE
   "laravel-mvc-architecture": createTopicSchema({
     id: "laravel-mvc-architecture",
