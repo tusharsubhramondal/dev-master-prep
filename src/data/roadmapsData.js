@@ -60,20 +60,30 @@ export const roadmapsData = {
 
   laravel: {
     techId: "laravel",
-    title: "Laravel Framework Roadmap",
+    title: "Senior & Lead Laravel Engineer Roadmap (8+ YOE Bank)",
     steps: [
-      { step: 1, title: "PHP Prerequisites", desc: "OOP, Namespaces, Interfaces, Traits, Composer dependency manager.", topicId: "php-basics", level: "Beginner" },
-      { step: 2, title: "Laravel Core & Environment", desc: "Installation, Artisan CLI, Folder Structure, Environment Config (.env).", topicId: "laravel-basics", level: "Beginner" },
-      { step: 3, title: "Routing & Controllers", desc: "Web & API Routes, Route Parameters, Named Routes, Resource Controllers.", topicId: "laravel-routing", level: "Beginner" },
-      { step: 4, title: "Blade Templating", desc: "Components, Directives (@if, @foreach), Layout Inheritance, Component slots.", topicId: "laravel-blade", level: "Beginner" },
-      { step: 5, title: "Database & Migrations", desc: "Schema Builder, Migrations, Seeders, Model Factories.", topicId: "laravel-database", level: "Intermediate" },
-      { step: 6, title: "Eloquent ORM", desc: "Relationships (HasOne, HasMany, BelongsToMany, Polymorphic), Local/Global Scopes.", topicId: "laravel-eloquent", level: "Intermediate" },
-      { step: 7, title: "Authentication & Authorization", desc: "Laravel Breeze / Sanctum, Policies, Gates, JWT API auth.", topicId: "laravel-auth", level: "Intermediate" },
-      { step: 8, title: "APIs & Resource Transformers", desc: "REST API building, Eloquent API Resources, Rate Limiting, CORS.", topicId: "laravel-apis", level: "Intermediate" },
-      { step: 9, title: "Service Container & Providers", desc: "Dependency Injection, Service Binding, Singletons, Service Providers lifecycle.", topicId: "laravel-service-container", level: "Senior" },
-      { step: 10, title: "Events, Listeners & Observers", desc: "Event Dispatcher, Model Observers, Sync vs Async event execution.", topicId: "laravel-events", level: "Senior" },
-      { step: 11, title: "Jobs, Queues & Horizon", desc: "Redis/Database queue drivers, Queue Workers, Laravel Horizon monitoring.", topicId: "laravel-queues", level: "Senior" },
-      { step: 12, title: "Architecture & Scale", desc: "Repository Pattern, Domain-Driven Design (DDD), Multi-Tenancy, Caching with Redis.", topicId: "laravel-architecture", level: "Senior" }
+      { step: 1, title: "1. Laravel Core & Architecture", desc: "Request lifecycle, public/index.php, IoC Service Container, Dependency Injection, Service Providers (register vs boot), Facades, and Middleware pipeline.", topicId: "laravel-core-architecture", level: "Senior" },
+      { step: 2, title: "2. Laravel MVC & Application Architecture", desc: "Thin controllers, DTOs, invokable Action classes, Service Layer, Repository pattern trade-offs, and Modular Monolith structure.", topicId: "laravel-mvc-architecture", level: "Senior" },
+      { step: 3, title: "3. Eloquent ORM — Senior Level", desc: "Active Record mechanics, N+1 query identification & fix, eager loading (with/load), polymorphic relations, Observers, Accessors, and streaming 10M records with lazyById().", topicId: "laravel-eloquent-senior", level: "Senior" },
+      { step: 4, title: "4. Database & SQL Optimization", desc: "B-Tree indexing, Leftmost Prefix Rule for composite indexes, transactions, ACID, deadlock auto-retries, pessimistic locks (lockForUpdate), and query EXPLAIN tuning.", topicId: "laravel-database-sql", level: "Senior" },
+      { step: 5, title: "5. Laravel Queues & Jobs", desc: "Async job execution, ShouldQueue, ShouldBeUnique, Queue Workers, Horizon dashboard, $tries & $backoff exponential retries, and timeout signals.", topicId: "laravel-queues-jobs", level: "Senior" },
+      { step: 6, title: "6. Events & Listeners", desc: "Event-driven decoupling, async listeners, Event Discovery, failure handling, and event chain propagation.", topicId: "laravel-events-listeners", level: "Senior" },
+      { step: 7, title: "7. Laravel Cache Architecture", desc: "Cache-aside pattern (Cache::remember), Cache stampede prevention (Cache::flexible), Redis tags, and invalidation strategies.", topicId: "laravel-cache", level: "Senior" },
+      { step: 8, title: "8. Redis Integration & Concurrency", desc: "Redis data structures, queues internal RPUSH/LPOP, token bucket rate limiting, and atomic distributed locks (Cache::lock()).", topicId: "laravel-redis", level: "Senior" },
+      { step: 9, title: "9. Authentication & Authorization", desc: "Guards vs Providers, Sanctum vs Passport OAuth2, Spatie RBAC, and Gates vs Policies.", topicId: "laravel-auth", level: "Senior" },
+      { step: 10, title: "10. Production API Development", desc: "RESTful JSON API design, URI versioning (/v1/), JsonResource transformation, cursor pagination, and X-Idempotency-Key headers.", topicId: "laravel-api-development", level: "Senior" },
+      { step: 11, title: "11. Laravel Security Hardening", desc: "OWASP protection against SQLi, XSS, CSRF, Argon2id password hashing, AES-256 encryption, and pre-deployment security checklists.", topicId: "laravel-security", level: "Senior" },
+      { step: 12, title: "12. Advanced Validation Patterns", desc: "Form Request decoupling, custom ValidationRules, nested array validation (items.*.id), and conditional Rule::when.", topicId: "laravel-validation", level: "Senior" },
+      { step: 13, title: "13. Automated Testing & Fakes", desc: "Unit vs Feature tests, RefreshDatabase isolation, Mockery container mocks, and framework fakes (Mail::fake, Queue::fake, Event::fake).", topicId: "laravel-testing", level: "Senior" },
+      { step: 14, title: "14. Performance & High Throughput Scaling", desc: "config:cache, route:cache, view:cache, OPcache tuning, and Laravel Octane with Swoole/FrankenPHP for 10,000+ req/sec.", topicId: "laravel-performance", level: "Senior" },
+      { step: 15, title: "15. Production Deployment & DevOps", desc: "Deployer zero-downtime symlink swaps, Nginx try_files configuration, PHP-FPM tuning, and Supervisor process monitoring.", topicId: "laravel-deployment-devops", level: "Senior" },
+      { step: 16, title: "16. Docker & Containerization", desc: "Multi-container Docker Compose setup, PHP-FPM vs Queue Worker containers, worker scaling, and multi-stage image optimization.", topicId: "laravel-docker", level: "Senior" },
+      { step: 17, title: "17. Microservices Architecture", desc: "Monolith vs Microservices criteria, async RabbitMQ messaging, Saga pattern for distributed transactions, and Circuit Breakers.", topicId: "laravel-microservices", level: "Senior" },
+      { step: 18, title: "18. Design Patterns in Laravel", desc: "GoF patterns: Strategy pattern for payments, Factory pattern, Decorator pattern for caching, and Pipeline pattern.", topicId: "laravel-design-patterns", level: "Senior" },
+      { step: 19, title: "19. High-Scale System Design", desc: "Architecting 1 million req/day applications: Load Balancer + Nginx + Laravel Octane + Redis Cluster + DB Master/Replica.", topicId: "laravel-system-design", level: "Senior" },
+      { step: 20, title: "20. Production Incident Debugging", desc: "Troubleshooting 5s slow APIs, 100% DB CPU, memory leaks in Horizon workers, and atomic decrements for overselling.", topicId: "laravel-realworld-scenarios", level: "Senior" },
+      { step: 21, title: "21. Engineering Leadership & Legacy Migration", desc: "Larastan Level 8 CI automation, Pint formatting, team mentoring, and Strangler Fig pattern for legacy migrations.", topicId: "laravel-leadership-senior", level: "Senior" },
+      { step: 22, title: "22. Senior Coding Challenges", desc: "Coding fixes for N+1 queries, 10M user generator streaming, atomic DB transactions, and race condition prevention.", topicId: "laravel-coding-challenges", level: "Senior" }
     ]
   },
 

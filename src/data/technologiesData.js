@@ -38,10 +38,10 @@ export const technologiesData = [
     difficulty: "Beginner • Intermediate • Senior",
     levels: ["Beginner", "Intermediate", "Senior"],
     description: "The PHP framework for web artisans with expressive syntax, Eloquent ORM, Jobs, and Queues.",
-    versions: ["Laravel 12", "Laravel 11", "Laravel 10"],
-    topicsCount: 42,
-    interviewCount: 180,
-    learningProgress: 75,
+    versions: ["Laravel 11", "Laravel 10", "Laravel Octane"],
+    topicsCount: 22,
+    interviewCount: 299,
+    learningProgress: 100,
     relatedTechIds: ["php", "mysql", "redis", "rest-api", "docker", "aws"]
   },
   {
