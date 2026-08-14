@@ -1,7 +1,7 @@
 import { createTopicSchema } from './createTopicSchema.js';
 
 export const laravelTopics = {
-  // 1. LARAVEL CORE & ARCHITECTURE
+    // 1. LARAVEL CORE & ARCHITECTURE
   "laravel-core-architecture": createTopicSchema({
     id: "laravel-core-architecture",
     techId: "laravel",
@@ -11,57 +11,49 @@ export const laravelTopics = {
     experienceBand: "8+ years",
     readingTime: "15 min",
     prerequisites: ["php-basics"],
-    definition: "The core framework architecture of Laravel built around public/index.php entry point, HTTP Kernel, IoC Service Container, Service Providers, and Middleware Pipeline.",
-    simpleExplanation: "Explains how a request enters public/index.php, boots Service Providers, passes through global middleware, resolves dependencies via reflection, and returns an HTTP response.",
-    whyDoesItExist: "Provides enterprise-grade dependency injection, predictable lifecycle phases, and modular component configuration.",
-    basicExample: `// bootstrap/app.php (Laravel 11 Entry Point & Lifecycle Configuration)
-use Illuminate\\Foundation\\Application;
-use Illuminate\\Foundation\\Configuration\\Middleware;
-use Illuminate\\Foundation\\Configuration\\Exceptions;
+    definition: "The complete step-by-step request lifecycle in Laravel 12: from public/index.php (maintenance check & Composer autoloader), bootstrap/app.php container setup, Service Provider register() and boot() phases, Global & Route Middleware execution, to Controller action, View/JSON rendering, and Response termination.",
+    simpleExplanation: "A 5-step lifecycle flow: 1) public/index.php receives the HTTP request, checks maintenance mode, and loads Composer. 2) bootstrap/app.php initializes the IoC Service Container and sets up route/middleware blueprints. 3) $app->handleRequest() runs Service Providers (register then boot). 4) Request passes through Global Middleware, matches a Route in web.php, passes Route Middleware, and executes the Controller. 5) Controller returns View/JSON response, sends it to the browser, and terminates.",
+    whyDoesItExist: "Provides enterprise-grade dependency injection, predictable lifecycle phases, modular configuration, and clean separation between application bootstrapping and request execution.",
+    basicExample: `// 1. Entry Point: public/index.php
+define('LARAVEL_START', microtime(true));
 
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'auth.custom' => \\App\\Http\\Middleware\\CustomAuth::class,
-        ]);
-    })
-    ->withExceptions(function (Exceptions $exceptions) {
-        // Exception handling configuration
-    })->create();`,
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+// 2. Application Blueprint: bootstrap/app.php
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+// 3. Request Processing Execution
+$app->handleRequest(Request::capture());`,
     howItWorks: [
-      "1. Web Server forwards HTTP request to public/index.php.",
-      "2. Composer autoloader & bootstrap/app.php load Application instance.",
-      "3. Service Providers execute register() phase then boot() phase.",
-      "4. Pipeline dispatches request through Global & Route Middleware to Controller.",
-      "5. Reflection API auto-wires dependencies into Controller action and returns Response."
+      "1. public/index.php: Starts performance timer (LARAVEL_START), checks storage/framework/maintenance.php, and loads Composer autoloader.",
+      "2. bootstrap/app.php: Application::configure() initializes IoC Service Container and registers web.php routes, middleware, and exception blueprints.",
+      "3. Service Providers: $app->handleRequest() runs register() (container bindings) then boot() (Auth Gates, Listeners) across all Service Providers.",
+      "4. Middleware & Routing: Request enters Global Middleware pipeline -> Router matches URL in routes/web.php -> Route Middleware runs.",
+      "5. Controller & Response: Controller action executes with Reflection Auto-Wiring -> returns Blade View or JSON -> Response sent to client -> terminate() cleanup runs."
     ],
-    visualDiagram: `<svg viewBox="0 0 800 200" class="w-full bg-slate-900 rounded-lg p-3"><rect x="20" y="70" width="120" height="60" rx="8" fill="#1e293b" stroke="#ff2d20" stroke-width="2"/><text x="80" y="105" fill="#f87171" font-size="12" text-anchor="middle">public/index.php</text><path d="M140 100 L180 100" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/><rect x="180" y="70" width="140" height="60" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/><text x="250" y="105" fill="#60a5fa" font-size="12" text-anchor="middle">HTTP Kernel & Providers</text><path d="M320 100 L360 100" stroke="#64748b" stroke-width="2"/><rect x="360" y="70" width="140" height="60" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="430" y="105" fill="#34d399" font-size="12" text-anchor="middle">Middleware Pipeline</text><path d="M500 100 L540 100" stroke="#64748b" stroke-width="2"/><rect x="540" y="70" width="120" height="60" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/><text x="600" y="105" fill="#fbbf24" font-size="12" text-anchor="middle">Controller / Action</text><path d="M660 100 L700 100" stroke="#64748b" stroke-width="2"/><rect x="700" y="70" width="80" height="60" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/><text x="740" y="105" fill="#c084fc" font-size="12" text-anchor="middle">Response</text></svg>`,
-    realWorldExample: `// Custom Service Provider demonstrating register vs boot
+    visualDiagram: `<svg viewBox="0 0 800 200" class="w-full bg-slate-900 rounded-lg p-3"><rect x="10" y="70" width="110" height="60" rx="8" fill="#1e293b" stroke="#ff2d20" stroke-width="2"/><text x="65" y="95" fill="#f87171" font-size="11" text-anchor="middle">public/index.php</text><text x="65" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Autoload & Maint</text><path d="M120 100 L150 100" stroke="#64748b" stroke-width="2"/><rect x="150" y="70" width="120" height="60" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/><text x="210" y="95" fill="#60a5fa" font-size="11" text-anchor="middle">bootstrap/app.php</text><text x="210" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Create Container</text><path d="M270 100 L300 100" stroke="#64748b" stroke-width="2"/><rect x="300" y="70" width="130" height="60" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/><text x="365" y="95" fill="#c084fc" font-size="11" text-anchor="middle">Service Providers</text><text x="365" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">register() -> boot()</text><path d="M430 100 L460 100" stroke="#64748b" stroke-width="2"/><rect x="460" y="70" width="130" height="60" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="525" y="95" fill="#34d399" font-size="11" text-anchor="middle">Middleware & Route</text><text x="525" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Global & Route Stack</text><path d="M590 100 L620 100" stroke="#64748b" stroke-width="2"/><rect x="620" y="70" width="160" height="60" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/><text x="700" y="95" fill="#fbbf24" font-size="11" text-anchor="middle">Controller & Response</text><text x="700" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Action -> View -> Send</text></svg>`,
+    realWorldExample: `// Real-World Service Provider (AppServiceProvider.php)
 namespace App\\Providers;
 
 use Illuminate\\Support\\ServiceProvider;
-use App\\Services\\PaymentGateway;
-use App\\Services\\StripeGateway;
+use App\\Services\\PaymentGatewayInterface;
+use App\\Services\\StripePaymentGateway;
+use Illuminate\\Support\\Facades\\Gate;
+use App\\Models\\User;
 
-class PaymentServiceProvider extends ServiceProvider {
+class AppServiceProvider extends ServiceProvider {
+    // STAGE 1: REGISTER PHASE - Bindings into IoC Container ONLY
     public function register(): void {
-        // ONLY CONTAINER BINDINGS
-        $this->app->singleton(PaymentGateway::class, function ($app) {
-            return new StripeGateway(config('services.stripe.secret'));
-        });
+        $this->app->bind(PaymentGatewayInterface::class, StripePaymentGateway::class);
     }
 
+    // STAGE 2: BOOT PHASE - Safe to call services, auth gates & event listeners
     public function boot(): void {
-        // SAFE TO CALL OTHER SERVICES & REGISTER LISTENERS
-        if ($this->app->runningInConsole()) {
-            // Register console commands or migrations
-        }
+        Gate::define('admin-only', fn (User $user) => $user->is_admin === true);
     }
 }`,
     commonUseCases: [
@@ -98,7 +90,7 @@ class PaymentServiceProvider extends ServiceProvider {
       testAssertion: "app(PaymentInterface::class) instanceof StripeService",
       solution: `public function register(): void {\n  $this->app->singleton(PaymentInterface::class, StripeService::class);\n}`
     },
-    quickRevision: "★ Entry point: public/index.php -> app.php -> HTTP Kernel.\n★ register() = bindings only; boot() = full environment ready.\n★ Use scoped() bindings in Octane."
+    quickRevision: "⚡ Entry point: public/index.php -> maintenance check -> autoload -> bootstrap/app.php -> $app->handleRequest() -> Service Providers (register -> boot) -> Global Middleware -> Route Match -> Controller -> View -> Terminate."
   }),
 
   // 2. LARAVEL MVC & APPLICATION ARCHITECTURE

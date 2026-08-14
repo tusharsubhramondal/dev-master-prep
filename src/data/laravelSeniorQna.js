@@ -12,7 +12,7 @@ export const laravelSeniorQuestions = [
       "Shopify"
     ],
     "question": "1. Explain the complete Laravel request lifecycle.",
-    "answer": "Request -> public/index.php -> bootstrap/app.php -> HTTP Kernel -> Service Providers (register -> boot) -> Global Middleware -> Router -> Route Middleware -> Controller/Action -> Response."
+    "answer": "public/index.php (Timer, Maintenance Check, Autoload) -> bootstrap/app.php (Create Container & Configure Routes/Middleware) -> $app->handleRequest() -> Service Providers (register -> boot) -> Global Middleware -> Route Matching (web.php) -> Route Middleware -> Controller Action (Auto-wired Dependencies) -> View/JSON Response -> Client Send & Terminate Cleanup."
   },
   {
     "id": "laravel-q2",
@@ -25,7 +25,7 @@ export const laravelSeniorQuestions = [
       "Amazon"
     ],
     "question": "2. What happens when a request enters public/index.php?",
-    "answer": "Maintenance check -> Composer autoloader loaded -> Bootstrap application instance -> $app->handleRequest(Request::capture()) returns Response."
+    "answer": "public/index.php executes 4 steps: 1) Defines LARAVEL_START timer, 2) Checks for maintenance mode (storage/framework/maintenance.php), 3) Loads Composer autoloader (vendor/autoload.php), and 4) Requires bootstrap/app.php and calls $app->handleRequest(Request::capture())."
   },
   {
     "id": "laravel-q3",

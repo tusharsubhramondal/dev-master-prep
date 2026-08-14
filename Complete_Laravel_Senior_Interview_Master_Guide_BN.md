@@ -35,29 +35,31 @@
 
 ### Q1. Explain the complete Laravel request lifecycle.
 **Answer:**
-1. **Entry Point:** All HTTP traffic hits `public/index.php`. It loads Composer autoloader (`vendor/autoload.php`) and initializes the Laravel Application instance via `bootstrap/app.php`.
-2. **HTTP Kernel:** Captures request using `Illuminate\Http\Request::capture()` and instantiates the HTTP Kernel. Global middleware runs (e.g. `TrustProxies`, `PreventRequestsDuringMaintenance`).
-3. **Service Providers:**
-   - **Register Phase:** Calls `register()` on all configured Service Providers (registers container bindings).
-   - **Boot Phase:** Calls `boot()` on all providers after registration completes.
-4. **Router Dispatch:** Router matches URL to route definitions in `routes/web.php` or `routes/api.php`, running route-specific middleware (`auth`, `throttle`).
-5. **Controller / Action:** Dependency Injection auto-wires controller dependencies via Reflection API and executes the controller action.
-6. **Response Return:** Controller returns a Response object sent to the browser via `$response->send()`.
-7. **Terminable Middleware:** Executes any `terminate($request, $response)` methods after response delivery.
+1. **Entry Point (`public/index.php`):** All HTTP traffic hits `public/index.php`. It starts the `LARAVEL_START` benchmarking timer, checks for maintenance mode (`storage/framework/maintenance.php`), and loads Composer autoloader (`vendor/autoload.php`).
+2. **Application Bootstrap (`bootstrap/app.php`):** Calls `Application::configure()` to instantiate the IoC Service Container and registers route definitions (`web.php`), middleware, and exception handling blueprints.
+3. **HTTP Request Capture & Handling (`$app->handleRequest()`):** Converts global server environment into an `Illuminate\Http\Request` object and dispatches it into the HTTP pipeline.
+4. **Service Providers:**
+   - **Register Phase:** Calls `register()` on all Service Providers (registers IoC container bindings only).
+   - **Boot Phase:** Calls `boot()` on all providers after registration completes (safe to register Auth Gates, Event Listeners, View Composers).
+5. **Global Middleware:** Request passes through global middleware stack (session, cookies, CSRF).
+6. **Router Dispatch:** Router matches URL to route definitions in `routes/web.php` or `routes/api.php`, executing route-specific middleware (`auth`, `throttle`).
+7. **Controller / Action:** Dependency Injection auto-wires controller dependencies via Reflection API and executes the controller action.
+8. **Response Return:** Controller returns a View or JSON response, sent to the browser via `$response->send()`.
+9. **Terminable Middleware:** Executes any `terminate($request, $response)` cleanup tasks after response delivery.
 
 ```
-Request -> public/index.php -> HTTP Kernel -> Service Providers (register -> boot) 
-        -> Global Middleware -> Router -> Route Middleware -> Controller/Action 
-        -> Response -> Terminable Middleware -> Browser Client
+Request -> public/index.php (Timer, Maint Check, Autoload) -> bootstrap/app.php (Create Container & Config) 
+        -> $app->handleRequest() -> Service Providers (register -> boot) -> Global Middleware 
+        -> Router -> Route Middleware -> Controller/Action -> Response -> Terminable Middleware -> Client
 ```
 
 ### Q2. What happens when a request enters public/index.php?
 **Answer:**
 `public/index.php` carries out 4 critical bootstrap tasks:
-1. Checks for maintenance mode file (`storage/framework/maintenance.php`).
-2. Requires Composer autoloader (`vendor/autoload.php`).
-3. Bootstrap application instance (`bootstrap/app.php`).
-4. Handles request via `$app->handleRequest(Request::capture())` and returns HTTP response.
+1. Defines `LARAVEL_START` microtime constant for performance profiling.
+2. Checks if maintenance mode is active (`storage/framework/maintenance.php`).
+3. Requires Composer autoloader (`vendor/autoload.php`).
+4. Requires `bootstrap/app.php` to configure the application instance and calls `$app->handleRequest(Request::capture())` to execute the pipeline and return the HTTP response.
 
 ### Q3. What is the Laravel Service Container?
 **Answer:**
