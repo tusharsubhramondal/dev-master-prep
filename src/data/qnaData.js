@@ -116,10 +116,16 @@ const techList = [
 export const qnaData = {};
 
 import { laravelSeniorQuestions } from './laravelSeniorQna.js';
+import { nodejsSeniorQuestions } from './nodejsSeniorQna.js';
+import { javascriptSeniorQuestions } from './javascriptSeniorQna.js';
 
 techList.forEach(techId => {
   if (techId === 'laravel') {
     qnaData[techId] = laravelSeniorQuestions;
+  } else if (techId === 'nodejs') {
+    qnaData[techId] = nodejsSeniorQuestions;
+  } else if (techId === 'javascript') {
+    qnaData[techId] = javascriptSeniorQuestions;
   } else {
     qnaData[techId] = generate100QuestionsForTech(techId);
   }

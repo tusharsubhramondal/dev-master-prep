@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { technologiesData } from '../data/technologiesData';
 import { roadmapsData } from '../data/roadmapsData';
+import { topicsData } from '../data/topicsData';
 import SEO from '../components/SEO';
 
 export default function RoadmapsPage() {
@@ -20,13 +21,47 @@ export default function RoadmapsPage() {
   const techObj = technologiesData.find((t) => t.id === selectedTech);
   const techTitle = techObj ? techObj.name : 'Developer';
 
-  // Helper to generate a default 3-level roadmap if a specific tech roadmap isn't custom defined
+  // Helper to generate dynamic roadmap directly from topicsData as single source of truth
   const getRoadmapForTech = (id) => {
     if (!id) return null;
+    const t = technologiesData.find((item) => item.id === id) || techObj;
+
+    // 1. Primary Source: Generate steps dynamically from topicsData
+    const matchingTopics = Object.values(topicsData).filter(
+      (topic) => topic && topic.techId === id
+    );
+
+    if (matchingTopics.length > 0) {
+      return {
+        techId: t ? t.id : id,
+        title: `${t ? t.name : id} Master Learning Roadmap`,
+        steps: matchingTopics.map((topic, index) => {
+          let level = 'Intermediate';
+          const diff = (topic.difficulty || '').toLowerCase();
+          const exp = (topic.experienceBand || '').toLowerCase();
+
+          if (diff.includes('beginner') || exp.includes('0–1') || exp.includes('0-1')) {
+            level = 'Beginner';
+          } else if (diff.includes('senior') || diff.includes('advanced') || exp.includes('8+')) {
+            level = 'Senior';
+          }
+
+          return {
+            step: index + 1,
+            title: topic.title,
+            desc: topic.simpleExplanation || topic.definition || topic.category || `Master ${topic.title}.`,
+            topicId: topic.id,
+            level: level
+          };
+        })
+      };
+    }
+
+    // 2. Secondary Fallback: Use custom roadmapsData if present
     if (roadmapsData[id]) {
       return roadmapsData[id];
     }
-    const t = technologiesData.find((item) => item.id === id) || techObj;
+
     if (!t) return null;
 
     return {
